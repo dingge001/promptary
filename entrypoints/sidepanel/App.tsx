@@ -50,8 +50,19 @@ import TrashPanel from './components/TrashPanel';
 
 type View = 'library' | 'settings' | 'trash';
 
-const headerBtn =
-  'flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-neutral-300 text-neutral-600 transition-colors hover:bg-neutral-100 hover:text-ink dark:border-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-800';
+/**
+ * 顶栏按钮。
+ *
+ * 写成函数而不是「基础类 + 追加类」:两套颜色类同时存在时,谁生效取决于
+ * Tailwind 生成 CSS 的先后顺序,而不是 className 里的书写顺序 ——
+ * 之前追加的 text-accent 就是被基础类里的 text-neutral-600 盖掉了。
+ */
+const headerBtn = (active = false) =>
+  `flex h-6 w-6 shrink-0 items-center justify-center rounded-md border transition-colors ${
+    active
+      ? 'border-accent bg-accent-soft text-accent'
+      : 'border-neutral-300 text-neutral-600 hover:bg-neutral-100 hover:text-ink dark:border-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-800'
+  }`;
 
 interface AnalyzeContext {
   imageUrl?: string;
@@ -406,7 +417,7 @@ export default function App() {
               void pickFromPage();
             }
           }}
-          className={`${headerBtn} ${pageImages ? 'border-accent text-accent' : ''}`}
+          className={headerBtn(Boolean(pageImages))}
           title={t('app.pickImage')}
         >
           <IconGrid />
@@ -419,7 +430,7 @@ export default function App() {
             setDetailId(undefined);
             setView('library');
           }}
-          className={`${headerBtn} ${view === 'library' ? 'border-accent text-accent' : ''}`}
+          className={headerBtn(view === 'library')}
           title={t('app.library')}
         >
           <IconLibrary />
@@ -427,7 +438,7 @@ export default function App() {
         <button
           type="button"
           onClick={() => setView('trash')}
-          className={`${headerBtn} ${view === 'trash' ? 'border-accent text-accent' : ''}`}
+          className={headerBtn(view === 'trash')}
           title={t('app.trash')}
         >
           <IconTrash />
@@ -435,7 +446,7 @@ export default function App() {
         <button
           type="button"
           onClick={() => setView('settings')}
-          className={`${headerBtn} ${view === 'settings' ? 'border-accent text-accent' : ''}`}
+          className={headerBtn(view === 'settings')}
           title={t('app.settings')}
         >
           <IconSettings />
@@ -601,7 +612,7 @@ export default function App() {
         <CategoryManager onClose={() => setShowCategoryManager(false)} />
       )}
 
-      {detailId && categories && tags && (
+      {view === 'library' && detailId && categories && tags && (
         <ItemDetail
           itemId={detailId}
           categories={categories}
@@ -628,7 +639,7 @@ export default function App() {
         />
       )}
 
-      {pageImages && (
+      {view === 'library' && pageImages && (
         <div className="flex min-h-0 flex-1 flex-col">
           <div className="flex-1 overflow-y-auto p-2">
             {pageImages.length === 0 ? (
