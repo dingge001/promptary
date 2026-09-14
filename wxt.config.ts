@@ -7,6 +7,9 @@ export default defineConfig({
 
   manifest: {
     name: 'Promptary',
+    // 与商店 listing 保持英文一致 —— 这段文字会显示在 chrome://extensions 上,
+    // 中文会让英文用户装完后看到一句看不懂的描述
+    description: 'Reverse-engineer any web image into a ready-to-use AI art prompt. Local-first, bring your own API key.',
     // 权限说明(遵循最小权限原则,申请了就必须真的用到):
     // contextMenus - 右键菜单(图片/文字反推与收藏)
     // storage      - 保存设置、API Key 与待处理任务
