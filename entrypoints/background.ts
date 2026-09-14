@@ -331,7 +331,7 @@ async function handleCancelBatch(): Promise<BackgroundResponse> {
  * 不设成 1(太慢)也不设成无限(几乎必然触发服务商限流,反而更容易失败)。
  * 3 是常见模型服务的舒适区,遇到 429 说明该调小。
  */
-const BATCH_CONCURRENCY = 3;
+const BATCH_CONCURRENCY = 10;
 
 async function runBatch(
   job: BatchJob,
