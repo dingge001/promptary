@@ -397,15 +397,28 @@ export default function App() {
             当前所在的位置用朱砂色标出来,用户一眼知道自己在哪 */}
         <button
           type="button"
-          onClick={pickFromPage}
-          className={headerBtn}
+          onClick={() => {
+            if (pageImages) {
+              setPageImages(null);
+              setSelectedUrls([]);
+            } else {
+              setView('library');
+              void pickFromPage();
+            }
+          }}
+          className={`${headerBtn} ${pageImages ? 'border-accent text-accent' : ''}`}
           title={t('app.pickImage')}
         >
           <IconGrid />
         </button>
         <button
           type="button"
-          onClick={() => setView('library')}
+          onClick={() => {
+            // 这两个视图会占住主区域,不一起收掉的话,库视图仍被让位条件挡着
+            setPageImages(null);
+            setDetailId(undefined);
+            setView('library');
+          }}
           className={`${headerBtn} ${view === 'library' ? 'border-accent text-accent' : ''}`}
           title={t('app.library')}
         >
@@ -437,7 +450,9 @@ export default function App() {
         )
       ) : view === 'trash' ? (
         <TrashPanel />
-      ) : (
+      ) : // 选图面板和详情页此时会占满剩余空间,库视图要让位 ——
+      // 三者同时渲染的话,它们会挤在库下面而不是替换库
+      pageImages || detailId ? null : (
         <>
           <div className="flex items-center gap-1.5 border-b border-neutral-200 px-2 py-1.5 dark:border-neutral-800">
             <div className="relative min-w-0 flex-1">
@@ -614,21 +629,7 @@ export default function App() {
       )}
 
       {pageImages && (
-        <div className="fixed inset-0 z-30 flex flex-col bg-white dark:bg-neutral-950">
-          <div className="flex items-center justify-between border-b border-neutral-200 px-3 py-2 dark:border-neutral-800">
-            <span className="text-xs font-medium">{t('picker.title')}</span>
-            <button
-              type="button"
-              onClick={() => {
-                setPageImages(null);
-                setSelectedUrls([]);
-              }}
-              className="rounded px-2 py-1 text-[11px] text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800"
-            >
-              {t('common.close')}
-            </button>
-          </div>
-
+        <div className="flex min-h-0 flex-1 flex-col">
           <div className="flex-1 overflow-y-auto p-2">
             {pageImages.length === 0 ? (
               <p className="p-3 text-[11px] leading-relaxed text-neutral-400">

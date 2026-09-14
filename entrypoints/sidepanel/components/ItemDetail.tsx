@@ -113,7 +113,7 @@ export default function ItemDetail({
   const dims = formatDimensions(item.width, item.height);
 
   return (
-    <div className="fixed inset-0 z-20 flex flex-col bg-white dark:bg-neutral-950">
+    <div className="flex min-h-0 flex-1 flex-col bg-canvas">
       <div className="flex items-center gap-1.5 border-b border-neutral-200 px-2 py-2 dark:border-neutral-800">
         <Button size="sm" square onClick={onClose} title={t('common.back')} icon={<IconArrowLeft />} />
         <div className="flex-1" />

@@ -285,12 +285,16 @@ export function IconGithub({ className = 'h-3.5 w-3.5' }: IconProps) {
     </svg>
   );
 }
-/** 库。两本立着的书 —— 比「一堆方块」更能表达「收藏的内容」 */
+/**
+ * 库。单张相框 —— 和 IconGrid(四宫格)区分得开:
+ * 那个表达「一批图里的选择」,这个表达「我收藏的图」。
+ */
 export function IconLibrary({ className = 'h-3.5 w-3.5' }: IconProps) {
   return (
     <svg {...base} className={className}>
-      <rect x="2.6" y="2.6" width="4.3" height="10.8" rx="1.1" />
-      <path d="M9.6 3.6l2.7.7a1.1 1.1 0 01.78 1.34l-1.9 7.1" />
+      <rect x="1.9" y="3.2" width="12.2" height="9.6" rx="2" />
+      <circle cx="5.7" cy="6.6" r="1.05" />
+      <path d="M2.4 11.4l3.1-2.6 2.3 1.9 2.6-2.5 3.2 3.1" />
     </svg>
   );
 }
