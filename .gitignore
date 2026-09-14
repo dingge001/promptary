@@ -1,0 +1,19 @@
+node_modules
+.wxt
+.output
+stats.html
+*.log
+.env
+.env.local
+
+# 编辑器 / 系统
+.DS_Store
+Thumbs.db
+.idea
+.vscode/*
+!.vscode/extensions.json
+
+# 打包产物
+*.zip
+*.crx
+*.pem

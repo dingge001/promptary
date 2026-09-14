@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Promptary 悬停按钮测试</title>
+    <style>
+      body {
+        font-family: system-ui, -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+        padding: 24px;
+        max-width: 900px;
+        margin: 0 auto;
+        color: #171717;
+      }
+      h1 { font-size: 20px; }
+      h2 { font-size: 14px; margin-top: 30px; color: #555; font-weight: 600; }
+      img { display: block; margin: 8px 0; border: 1px solid #ddd; border-radius: 6px; }
+      .note { color: #888; font-size: 13px; line-height: 1.7; }
+      code { background: #f5f5f5; padding: 1px 5px; border-radius: 4px; font-size: 12px; }
+    </style>
+  </head>
+  <body>
+    <h1>Promptary 悬停按钮测试</h1>
+    <p class="note">
+      鼠标移到下面每张图上,右上角应该出现蓝色「P」按钮。<br />
+      按 <code>F12</code> 打开 Console,应该能看到 <code>[Promptary]</code> 开头的日志。
+    </p>
+
+    <h2>① 大图 600×400 — 应该出现按钮</h2>
+    <img src="https://picsum.photos/id/1015/600/400" width="600" height="400" alt="大图" />
+
+    <h2>② 中等图 300×200 — 应该出现按钮</h2>
+    <img src="https://picsum.photos/id/1025/300/200" width="300" height="200" alt="中等图" />
+
+    <h2>③ 被链接包裹的图 400×300 — 应该出现(验证穿透遮罩)</h2>
+    <a href="#">
+      <img src="https://picsum.photos/id/1043/400/300" width="400" height="300" alt="链接包裹的图" />
+    </a>
+
+    <h2>④ 小图标 48×48 — 不应该出现按钮</h2>
+    <img src="https://picsum.photos/id/1062/48/48" width="48" height="48" alt="小图标" />
+  </body>
+</html>

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>design — 设计 Token 速查</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, 'Segoe UI', 'Microsoft YaHei', sans-serif; background: #0f1115; color: #e6e6e6; line-height: 1.6; padding: 3rem 2rem; }
+  .container { max-width: 1200px; margin: 0 auto; }
+  header { text-align: center; margin-bottom: 3rem; }
+  header h1 { font-size: 1.6rem; font-weight: 600; letter-spacing: 0.02em; }
+  header p { color: #8b93a1; font-size: 0.9rem; margin-top: 0.4rem; }
+  section { margin-bottom: 3rem; }
+  section h2 { font-size: 1.2rem; margin-bottom: 0.2rem; }
+  .section-label { font-family: ui-monospace, Consolas, monospace; font-size: 0.72rem; color: #8b93a1; text-transform: uppercase; letter-spacing: 0.12em; border-bottom: 1px solid #23272f; padding-bottom: 0.5rem; margin-bottom: 1.2rem; }
+
+  /* 色板 */
+  .swatch-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.9rem; }
+  .swatch { background: #171a21; border: 1px solid #23272f; border-radius: 8px; overflow: hidden; }
+  .swatch__color { height: 70px; display: flex; align-items: flex-end; justify-content: flex-start; padding: 0.5rem; font-family: ui-monospace, Consolas, monospace; font-size: 0.68rem; }
+  .swatch__name { padding: 0.5rem 0.7rem; font-family: ui-monospace, Consolas, monospace; font-size: 0.72rem; color: #b6bcc7; }
+
+  /* 字体 */
+  .font-row { padding: 1rem 0; border-bottom: 1px solid #23272f; }
+  .font-row__label { font-family: ui-monospace, Consolas, monospace; font-size: 0.68rem; color: #8b93a1; margin-bottom: 0.4rem; }
+  .font-row__sample { font-size: 1.8rem; color: #f0f0f0; }
+  .font-row__value { font-family: ui-monospace, Consolas, monospace; font-size: 0.72rem; color: #8b93a1; margin-top: 0.3rem; }
+
+  /* 缓动 */
+  .ease-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; }
+  .ease-card { background: #171a21; border: 1px solid #23272f; border-radius: 8px; padding: 1rem; }
+  .ease-card__label { font-family: ui-monospace, Consolas, monospace; font-size: 0.72rem; color: #b6bcc7; }
+  .ease-card__track { position: relative; height: 40px; background: #0f1115; border-radius: 4px; margin: 0.7rem 0; overflow: hidden; }
+  .ease-card__dot { position: absolute; top: 50%; left: 0; width: 12px; height: 12px; margin-top: -6px; background: #5b9bff; border-radius: 50%; }
+  .ease-card__value { font-family: ui-monospace, Consolas, monospace; font-size: 0.72rem; color: #8b93a1; word-break: break-all; }
+  @keyframes easeDemo {
+    from { left: 0; }
+    to { left: calc(100% - 12px); }
+  }
+
+  /* 尺寸 */
+  .size-grid { display: flex; flex-wrap: wrap; gap: 1.5rem; align-items: flex-end; }
+  .size-item { display: flex; flex-direction: column; align-items: flex-start; gap: 0.35rem; }
+  .size-item__shape { background: var(--panel, #171a21); }
+  .size-item__name { font-family: ui-monospace, Consolas, monospace; font-size: 0.72rem; color: #b6bcc7; }
+  .size-item__value { font-family: ui-monospace, Consolas, monospace; font-size: 0.7rem; color: #8b93a1; }
+
+  /* 其他 */
+  .other-row { display: flex; gap: 1rem; padding: 0.45rem 0; border-bottom: 1px solid #1c2028; font-family: ui-monospace, Consolas, monospace; font-size: 0.8rem; }
+  .other-row code { color: #5b9bff; flex-shrink: 0; }
+  .other-row span { color: #b6bcc7; word-break: break-all; }
+
+  .empty { color: #8b93a1; font-size: 0.85rem; padding: 1rem 0; }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>design</h1>
+    <p>设计 Token 可视化速查 · 由 ef-capturing-design-spec 生成</p>
+  </header>
+
+  <section><h2>色彩系统</h2><div class="section-label">Color Tokens</div><div class="empty">未提取到颜色变量</div></section>
+  <section><h2>字体系统</h2><div class="section-label">Typography</div>
+      <div class="font-row">
+        <div class="font-row__label">font-brand</div>
+        <div class="font-row__sample" style="font-family:ZCOOL XiaoWei, Cormorant Garamond, PingFang SC, Microsoft YaHei, serif;">中文样例 Abc 123</div>
+        <div class="font-row__value">&quot;ZCOOL XiaoWei&quot;, &quot;Cormorant Garamond&quot;, &quot;PingFang SC&quot;, &quot;Microsoft YaHei&quot;, serif</div>
+      </div>
+      <div class="font-row">
+        <div class="font-row__label">font-display</div>
+        <div class="font-row__sample" style="font-family:Be Vietnam Pro, PingFang SC, Microsoft YaHei, Noto Sans SC, sans-serif;">中文样例 Abc 123</div>
+        <div class="font-row__value">&quot;Be Vietnam Pro&quot;, &quot;PingFang SC&quot;, &quot;Microsoft YaHei&quot;, &quot;Noto Sans SC&quot;, sans-serif</div>
+      </div>
+      <div class="font-row">
+        <div class="font-row__label">font-body</div>
+        <div class="font-row__sample" style="font-family:Roboto Flex, PingFang SC, Microsoft YaHei, Noto Sans SC, sans-serif;">中文样例 Abc 123</div>
+        <div class="font-row__value">&quot;Roboto Flex&quot;, &quot;PingFang SC&quot;, &quot;Microsoft YaHei&quot;, &quot;Noto Sans SC&quot;, sans-serif</div>
+      </div>
+      <div class="font-row">
+        <div class="font-row__label">font-mono</div>
+        <div class="font-row__sample" style="font-family:JetBrains Mono, Roboto Mono, ui-monospace, monospace;">中文样例 Abc 123</div>
+        <div class="font-row__value">&quot;JetBrains Mono&quot;, &quot;Roboto Mono&quot;, ui-monospace, monospace</div>
+      </div></section>
+  <section><h2>缓动函数</h2><div class="section-label">Easing</div><div class="ease-grid">
+      <div class="ease-card">
+        <div class="ease-card__label">ease-out</div>
+        <div class="ease-card__track">
+          <div class="ease-card__dot" style="animation: easeDemo 1.2s cubic-bezier(.12, .23, .5, 1) infinite;"></div>
+        </div>
+        <div class="ease-card__value">cubic-bezier(.12, .23, .5, 1)</div>
+      </div>
+      <div class="ease-card">
+        <div class="ease-card__label">ease-out-expo</div>
+        <div class="ease-card__track">
+          <div class="ease-card__dot" style="animation: easeDemo 1.2s cubic-bezier(.22, 1, .36, 1) infinite;"></div>
+        </div>
+        <div class="ease-card__value">cubic-bezier(.22, 1, .36, 1)</div>
+      </div>
+      <div class="ease-card">
+        <div class="ease-card__label">ease-spring</div>
+        <div class="ease-card__track">
+          <div class="ease-card__dot" style="animation: easeDemo 1.2s cubic-bezier(.34, 1.56, .64, 1) infinite;"></div>
+        </div>
+        <div class="ease-card__value">cubic-bezier(.34, 1.56, .64, 1)</div>
+      </div></div></section>
+  <section><h2>圆角 / 尺寸</h2><div class="section-label">Radius & Spacing</div><div class="size-grid">
+      <div class="size-item">
+        <div class="size-item__shape" style="width:80px;height:40px;background:var(--panel);border:1px solid var(--line);border-radius:8px;"></div>
+        <div class="size-item__name">radius-sm</div>
+        <div class="size-item__value">8px</div>
+      </div>
+      <div class="size-item">
+        <div class="size-item__shape" style="width:80px;height:40px;background:var(--panel);border:1px solid var(--line);border-radius:20px;"></div>
+        <div class="size-item__name">radius-md</div>
+        <div class="size-item__value">20px</div>
+      </div>
+      <div class="size-item">
+        <div class="size-item__shape" style="width:80px;height:40px;background:var(--panel);border:1px solid var(--line);border-radius:24px;"></div>
+        <div class="size-item__name">radius-lg</div>
+        <div class="size-item__value">24px</div>
+      </div>
+      <div class="size-item">
+        <div class="size-item__shape" style="width:80px;height:40px;background:var(--panel);border:1px solid var(--line);border-radius:999px;"></div>
+        <div class="size-item__name">radius-pill</div>
+        <div class="size-item__value">999px</div>
+      </div>
+      <div class="size-item">
+        <div class="size-item__shape" style="width:40px;height:8px;background:var(--accent);border-radius:4px;"></div>
+        <div class="size-item__name">space-1</div>
+        <div class="size-item__value">4px</div>
+      </div>
+      <div class="size-item">
+        <div class="size-item__shape" style="width:80px;height:8px;background:var(--accent);border-radius:4px;"></div>
+        <div class="size-item__name">space-2</div>
+        <div class="size-item__value">8px</div>
+      </div>
+      <div class="size-item">
+        <div class="size-item__shape" style="width:120px;height:8px;background:var(--accent);border-radius:4px;"></div>
+        <div class="size-item__name">space-3</div>
+        <div class="size-item__value">12px</div>
+      </div>
+      <div class="size-item">
+        <div class="size-item__shape" style="width:160px;height:8px;background:var(--accent);border-radius:4px;"></div>
+        <div class="size-item__name">space-4</div>
+        <div class="size-item__value">16px</div>
+      </div>
+      <div class="size-item">
+        <div class="size-item__shape" style="width:160px;height:8px;background:var(--accent);border-radius:4px;"></div>
+        <div class="size-item__name">space-5</div>
+        <div class="size-item__value">24px</div>
+      </div>
+      <div class="size-item">
+        <div class="size-item__shape" style="width:160px;height:8px;background:var(--accent);border-radius:4px;"></div>
+        <div class="size-item__name">space-6</div>
+        <div class="size-item__value">32px</div>
+      </div>
+      <div class="size-item">
+        <div class="size-item__shape" style="width:160px;height:8px;background:var(--accent);border-radius:4px;"></div>
+        <div class="size-item__name">space-7</div>
+        <div class="size-item__value">48px</div>
+      </div>
+      <div class="size-item">
+        <div class="size-item__shape" style="width:160px;height:8px;background:var(--accent);border-radius:4px;"></div>
+        <div class="size-item__name">space-8</div>
+        <div class="size-item__value">64px</div>
+      </div>
+      <div class="size-item">
+        <div class="size-item__shape" style="width:160px;height:8px;background:var(--accent);border-radius:4px;"></div>
+        <div class="size-item__name">space-9</div>
+        <div class="size-item__value">96px</div>
+      </div>
+      <div class="size-item">
+        <div class="size-item__shape" style="width:160px;height:8px;background:var(--accent);border-radius:4px;"></div>
+        <div class="size-item__name">space-10</div>
+        <div class="size-item__value">128px</div>
+      </div>
+      <div class="size-item">
+        <div class="size-item__shape" style="width:160px;height:8px;background:var(--accent);border-radius:4px;"></div>
+        <div class="size-item__name">text-h3</div>
+        <div class="size-item__value">28px</div>
+      </div>
+      <div class="size-item">
+        <div class="size-item__shape" style="width:160px;height:8px;background:var(--accent);border-radius:4px;"></div>
+        <div class="size-item__name">text-h4</div>
+        <div class="size-item__value">20px</div>
+      </div>
+      <div class="size-item">
+        <div class="size-item__shape" style="width:160px;height:8px;background:var(--accent);border-radius:4px;"></div>
+        <div class="size-item__name">text-body-l</div>
+        <div class="size-item__value">18px</div>
+      </div>
+      <div class="size-item">
+        <div class="size-item__shape" style="width:160px;height:8px;background:var(--accent);border-radius:4px;"></div>
+        <div class="size-item__name">text-body</div>
+        <div class="size-item__value">16px</div>
+      </div>
+      <div class="size-item">
+        <div class="size-item__shape" style="width:140px;height:8px;background:var(--accent);border-radius:4px;"></div>
+        <div class="size-item__name">text-caption</div>
+        <div class="size-item__value">14px</div>
+      </div>
+      <div class="size-item">
+        <div class="size-item__shape" style="width:120px;height:8px;background:var(--accent);border-radius:4px;"></div>
+        <div class="size-item__name">text-label</div>
+        <div class="size-item__value">12px</div>
+      </div>
+      <div class="size-item">
+        <div class="size-item__shape" style="width:160px;height:8px;background:var(--accent);border-radius:4px;"></div>
+        <div class="size-item__name">container</div>
+        <div class="size-item__value">1200px</div>
+      </div>
+      <div class="size-item">
+        <div class="size-item__shape" style="width:160px;height:8px;background:var(--accent);border-radius:4px;"></div>
+        <div class="size-item__name">header-h</div>
+        <div class="size-item__value">64px</div>
+      </div></div></section>
+  <section><h2>其他 Token</h2><div class="section-label">Others</div>
+      <div class="other-row">
+        <code>--text-display-xl</code>
+        <span>clamp(48px, 6vw, 72px)</span>
+      </div>
+      <div class="other-row">
+        <code>--text-display-l</code>
+        <span>clamp(40px, 5vw, 56px)</span>
+      </div>
+      <div class="other-row">
+        <code>--text-h2</code>
+        <span>clamp(28px, 3.5vw, 40px)</span>
+      </div></section>
+</div>
+</body>
+</html>

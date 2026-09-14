@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: 安装依赖
+        run: pnpm install --frozen-lockfile
+
+      # 类型检查顺带承担了「语言包 key 是否齐全」的校验 ——
+      # 五种语言包都由 zh-CN 的 Dict 类型约束,漏翻一条这里就会红
+      - name: 类型检查
+        run: pnpm compile
+
+      - name: 构建
+        run: pnpm build

@@ -1,0 +1,160 @@
+@import "tailwindcss";
+
+/* ============================================================
+   设计 Token —— 取自 aidingge.top
+   主色是朱砂 #c13d2c,全局只有这一个彩色,所以它出现的地方就是焦点。
+   完整规格见 docs/design/design-spec.md
+   ============================================================ */
+
+:root,
+[data-theme="light"] {
+  /* 强调色:朱砂 */
+  --accent: #c13d2c;
+  --accent-hover: #a63225;
+  --accent-soft: rgba(193, 61, 44, 0.12);
+  --accent-glow: rgba(193, 61, 44, 0.28);
+
+  /* 背景色。页面一律纯白,不加任何底色 ——
+     主站用的是浅灰画布 + 白卡片的分层,但侧边栏本来就窄,
+     再切出一层灰底只会显得脏。层次交给边框和阴影去表达。
+     surface-alt 仍保留浅灰:输入框、代码块这类需要和底区分开的元素还得靠它。 */
+  --canvas: #ffffff;
+  --surface: #ffffff;
+  --surface-alt: #f2f0f0;
+
+  --line: #e7e7e7;
+  --line-strong: #d8d8d8;
+
+  /* 三级文字 */
+  --ink: #171717;
+  --ink-2: #666666;
+  --ink-3: #71717a;
+
+  /* 双层柔和阴影:一层贴边勾轮廓,一层散开做纵深 */
+  --shadow-card: 0 1px 2px rgba(23, 23, 23, 0.05), 0 8px 24px rgba(23, 23, 23, 0.06);
+  --shadow-card-hover: 0 4px 8px rgba(23, 23, 23, 0.07), 0 16px 40px rgba(23, 23, 23, 0.12);
+}
+
+[data-theme="dark"] {
+  /* 暗色下把朱砂提亮,补偿低亮度环境的感知衰减 —— 不是简单反色 */
+  --accent: #d95a45;
+  --accent-hover: #e66b55;
+  --accent-soft: rgba(217, 90, 69, 0.14);
+  --accent-glow: rgba(217, 90, 69, 0.32);
+
+  --canvas: #0d0d10;
+  --surface: #161619;
+  --surface-alt: #121215;
+
+  --line: #26262b;
+  --line-strong: #34343b;
+
+  /* 暖白而非纯白:朱砂偏暖,配冷白会显脏 */
+  --ink: #edece8;
+  --ink-2: #9c9a92;
+  --ink-3: #8b8880;
+
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-card-hover: 0 4px 8px rgba(0, 0, 0, 0.5), 0 16px 40px rgba(0, 0, 0, 0.45);
+}
+
+@theme inline {
+  /* 语义色 */
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-glow: var(--accent-glow);
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-surface-alt: var(--surface-alt);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+
+  /* 把 neutral 色阶整体重映射到主站的灰阶。
+     这样既有组件里的 bg-neutral-50 / dark:bg-neutral-950 之类的写法
+     不用逐个改,就自动换成了主站的调性 —— 因为变量本身随主题切换。 */
+  --color-neutral-50: var(--canvas);
+  --color-neutral-100: var(--surface-alt);
+  --color-neutral-200: var(--line);
+  --color-neutral-300: var(--line-strong);
+  --color-neutral-400: var(--ink-3);
+  --color-neutral-500: var(--ink-3);
+  --color-neutral-600: var(--ink-2);
+  --color-neutral-700: var(--line-strong);
+  --color-neutral-800: var(--line);
+  --color-neutral-900: var(--surface-alt);
+  --color-neutral-950: var(--canvas);
+
+  /* 字体:正文用可变字重的 Roboto Flex,品牌名用书法感的 ZCOOL XiaoWei */
+  --font-sans: "Roboto Flex", system-ui, -apple-system, "PingFang SC", "Microsoft YaHei",
+    "Noto Sans SC", sans-serif;
+  --font-brand: "ZCOOL XiaoWei", "Cormorant Garamond", "PingFang SC", serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  /* 侧边栏比主站窄得多,圆角按比例收到 12px */
+  --radius-card: 12px;
+
+  --ease-out-soft: cubic-bezier(0.12, 0.23, 0.5, 1);
+  --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* 主题用 data-theme 属性切换,和主站保持一致 */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* 主站的入场动画,时长按侧边栏尺度减半 */
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-rise-in {
+  animation: rise-in 0.28s var(--ease-out-expo) both;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.2s var(--ease-out-soft) both;
+}
+
+/* 尊重系统的减弱动效偏好 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* 细窄滚动条,颜色跟随边框,不抢视线 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--line-strong);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--ink-3);
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
