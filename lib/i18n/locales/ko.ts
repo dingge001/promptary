@@ -1,6 +1,10 @@
 import type { Dict } from './zh-CN';
 
 export const ko: Dict = {
+  'settings.about': '정보',
+  'settings.githubRepo': 'GitHub 저장소',
+  'settings.githubHint': '오픈 소스입니다. Issue와 PR을 환영합니다(특히 새 이미지 모델 지원).',
+  'settings.reportIssue': '문제 신고',
   'common.close': '닫기',
   'common.cancel': '취소',
   'common.save': '저장',

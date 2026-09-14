@@ -2,6 +2,10 @@ import type { Dict } from './zh-CN';
 
 /** 繁體中文(台灣用語) */
 export const zhTW: Dict = {
+  'settings.about': '關於',
+  'settings.githubRepo': 'GitHub 儲存庫',
+  'settings.githubHint': '開源專案,歡迎提 Issue 或 PR —— 尤其歡迎新增生圖模型的支援。',
+  'settings.reportIssue': '回報問題',
   'common.close': '關閉',
   'common.cancel': '取消',
   'common.save': '儲存',

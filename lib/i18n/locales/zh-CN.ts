@@ -4,6 +4,10 @@
  */
 export const zhCN = {
   // ---------- 通用 ----------
+  'settings.about': '关于',
+  'settings.githubRepo': 'GitHub 仓库',
+  'settings.githubHint': '开源项目,欢迎提 Issue 或 PR —— 新增生图模型的支持尤其欢迎。',
+  'settings.reportIssue': '反馈问题',
   'common.close': '关闭',
   'common.cancel': '取消',
   'common.save': '保存',

@@ -1,6 +1,10 @@
 import type { Dict } from './zh-CN';
 
 export const en: Dict = {
+  'settings.about': 'About',
+  'settings.githubRepo': 'GitHub repository',
+  'settings.githubHint': 'Open source — issues and PRs welcome, especially new image-model profiles.',
+  'settings.reportIssue': 'Report an issue',
   'common.close': 'Close',
   'common.cancel': 'Cancel',
   'common.save': 'Save',

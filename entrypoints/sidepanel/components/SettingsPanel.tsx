@@ -8,7 +8,7 @@ import { buildSystemPrompt } from '@/lib/vision/schema';
 import { categoryLabel } from '@/lib/i18n';
 import DataSection from './DataSection';
 import { getLocale, LOCALE_LABELS, LOCALES, t } from '@/lib/i18n';
-import { IconBolt, IconCopy, IconEye, IconEyeOff } from './icons';
+import { IconBolt, IconCopy, IconEye, IconEyeOff, IconGithub } from './icons';
 import { Button, Input, Select, Switch } from './ui';
 
 interface Props {
@@ -377,6 +377,31 @@ export default function SettingsPanel({ settings, onChanged }: Props) {
             ]}
           />
         </div>
+      </section>
+
+      <section className="mb-5">
+        <h2 className="mb-2 text-xs font-semibold">{t('settings.about')}</h2>
+        <a
+          href="https://github.com/dingge001/promptary"
+          target="_blank"
+          rel="noreferrer"
+          className="flex items-center gap-2 rounded-lg border border-line p-2 text-[11px] text-ink-2 transition-colors hover:border-accent hover:text-accent"
+        >
+          <IconGithub className="h-4 w-4 shrink-0" />
+          <span className="font-medium">{t('settings.githubRepo')}</span>
+          <span className="ml-auto text-ink-3">↗</span>
+        </a>
+        <p className="mt-1.5 text-[10px] leading-relaxed text-neutral-400">
+          {t('settings.githubHint')}
+        </p>
+        <a
+          href="https://github.com/dingge001/promptary/issues"
+          target="_blank"
+          rel="noreferrer"
+          className="mt-1.5 inline-block text-[10px] text-accent hover:underline"
+        >
+          {t('settings.reportIssue')} ↗
+        </a>
       </section>
 
       <DataSection />

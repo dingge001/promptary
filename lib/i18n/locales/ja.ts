@@ -1,6 +1,10 @@
 import type { Dict } from './zh-CN';
 
 export const ja: Dict = {
+  'settings.about': 'このアプリについて',
+  'settings.githubRepo': 'GitHub リポジトリ',
+  'settings.githubHint': 'オープンソースです。Issue や PR を歓迎します(特に新しい画像モデルの対応)。',
+  'settings.reportIssue': '問題を報告',
   'common.close': '閉じる',
   'common.cancel': 'キャンセル',
   'common.save': '保存',
