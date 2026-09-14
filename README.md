@@ -53,6 +53,20 @@ One click inserts the saved prompt into your image tool's input box. No copy-pas
 **Works offline, in five languages**
 English, 简体中文, 繁體中文, 日本語, 한국어.
 
+## Screenshots
+
+**Your library** — categories and tags on the left, thumbnail grid on the right. Hover a card for star and delete.
+
+<img src="./assets/store/02-library.png" width="820" alt="The Promptary library" />
+
+**Model profiles** — pick your target model once. Each profile carries its own rules, so switching changes the output format, not just the wording.
+
+<img src="./assets/store/03-models.png" width="820" alt="Model profiles in settings" />
+
+**Item detail** — edit the prompt, prune the tags, switch models and re-analyse. One click sends it to your generator.
+
+<img src="./assets/store/04-detail.png" width="820" alt="Item detail view" />
+
 ## Privacy
 
 No account. No sign-up. No analytics. No telemetry. **There is no Promptary server.**
