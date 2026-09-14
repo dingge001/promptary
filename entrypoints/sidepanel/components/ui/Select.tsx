@@ -64,14 +64,20 @@ export default function Select({
 
     document.addEventListener('mousedown', onPointerDown);
     document.addEventListener('keydown', onKey);
-    // 弹层是 fixed 定位、不跟随触发器,页面一滚就会飘在原地,直接关掉
-    window.addEventListener('scroll', close, true);
+    // 弹层是 fixed 定位、不跟随触发器,页面一滚就会飘在原地,所以要关掉。
+    // 但必须排除弹层自身的滚动 —— capture 模式下这里能收到所有滚动事件,
+    // 不区分来源的话,用户在列表里滚一下就等于自己把下拉关了。
+    const onScroll = (e: Event) => {
+      if (menuRef.current?.contains(e.target as Node)) return;
+      close();
+    };
+    window.addEventListener('scroll', onScroll, true);
     window.addEventListener('resize', close);
 
     return () => {
       document.removeEventListener('mousedown', onPointerDown);
       document.removeEventListener('keydown', onKey);
-      window.removeEventListener('scroll', close, true);
+      window.removeEventListener('scroll', onScroll, true);
       window.removeEventListener('resize', close);
     };
   }, [open]);

@@ -187,7 +187,7 @@ export default function ItemDetail({
               下拉用固定窄宽度而不是 flex-1,否则会把这一行撑到换行 */}
           <Select
             size="sm"
-            className="w-24 shrink-0"
+            className="min-w-0 flex-1"
             value={pickModel}
             onChange={setPickModel}
             options={MODEL_PROFILES.map((m) => ({
