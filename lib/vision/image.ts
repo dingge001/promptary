@@ -132,3 +132,31 @@ export function siteOf(url?: string): string | undefined {
     return undefined;
   }
 }
+
+/**
+ * 把宽高换算成好认的比例,例如 1536×1024 → "3:2"。
+ *
+ * 只在贴近常见比例时才给结果:怪异尺寸(如 1234×567)算出来的
+ * gcd 往往是 1,硬凑成 "1234:567" 反而没法用,不如只显示像素尺寸。
+ */
+const COMMON_RATIOS: [number, number][] = [
+  [1, 1], [4, 3], [3, 2], [16, 9], [21, 9],
+  [3, 4], [2, 3], [9, 16],
+];
+
+export function formatAspect(width?: number, height?: number): string | undefined {
+  if (!width || !height) return undefined;
+
+  const actual = width / height;
+  for (const [w, h] of COMMON_RATIOS) {
+    if (Math.abs(actual - w / h) / (w / h) < 0.02) return `${w}:${h}`;
+  }
+  return undefined;
+}
+
+/** 拼成一句给用户看的尺寸说明,例如 "1536 × 1024 · 3:2" */
+export function formatDimensions(width?: number, height?: number): string | undefined {
+  if (!width || !height) return undefined;
+  const ratio = formatAspect(width, height);
+  return `${width} × ${height}${ratio ? ` · ${ratio}` : ''}`;
+}

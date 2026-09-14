@@ -4,6 +4,7 @@ import { createResultPanel } from '@/lib/inpage/result-panel';
 import type { AnalyzedPayload, BackgroundResponse, PageImage, TabCommand } from '@/lib/messages';
 import { detectLocale, setLocale, t } from '@/lib/i18n';
 import { SETTINGS_STORAGE_KEY } from '@/lib/settings';
+import { formatDimensions } from '@/lib/vision/image';
 import { deriveTitle } from '@/lib/vision/schema';
 
 /**
@@ -28,6 +29,26 @@ export default defineContentScript({
     setupInPageUI();
   },
 });
+
+/**
+ * 取原图尺寸,用于在结果面板里提示比例。
+ * 悬停按钮那条路径手上就有 img 元素,直接读;右键来的只有 URL,得加载一次 ——
+ * 多半命中浏览器缓存,成本很低。
+ */
+function resolveImageSize(
+  target: HTMLImageElement | string,
+  imageUrl: string,
+): Promise<{ w: number; h: number } | undefined> {
+  if (typeof target !== 'string' && target.naturalWidth > 0) {
+    return Promise.resolve({ w: target.naturalWidth, h: target.naturalHeight });
+  }
+  return new Promise((resolve) => {
+    const probe = new Image();
+    probe.onload = () => resolve({ w: probe.naturalWidth, h: probe.naturalHeight });
+    probe.onerror = () => resolve(undefined);
+    probe.src = imageUrl;
+  });
+}
 
 /** 由 setupInPageUI 赋值,供右键菜单触发的反推调用 */
 let analyzeInPage: ((imageUrl: string) => void) | null = null;
@@ -71,6 +92,9 @@ function setupInPageUI(): void {
     // 右键菜单和「重新生成」只给得到 URL,直接透传。
     const imageUrl = typeof target === 'string' ? target : target.currentSrc || target.src;
 
+    // 尺寸和分析并行取,不额外拖慢流程
+    const sizePromise = resolveImageSize(target, imageUrl);
+
     try {
       const res = (await chrome.runtime.sendMessage({
         type: 'analyzeFromPage',
@@ -86,6 +110,7 @@ function setupInPageUI(): void {
       }
 
       const data = res.data;
+      const size = await sizePromise;
       panel.showResult(data, {
         onSave: async (edited) => {
           const fields = {
@@ -108,7 +133,7 @@ function setupInPageUI(): void {
         },
         // 换模型重推:用同一个图片地址再走一遍
         onRegenerate: (id) => void runAnalyze(imageUrl, id),
-      });
+      }, formatDimensions(size?.w, size?.h));
     } catch (err) {
       panel.showError((err as Error).message);
     } finally {

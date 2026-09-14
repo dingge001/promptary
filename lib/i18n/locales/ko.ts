@@ -56,6 +56,7 @@ export const ko: Dict = {
   'detail.analyzeShort': '분석',
   'detail.prompt': '프롬프트',
   'detail.negative': '네거티브 프롬프트',
+  'detail.dimensions': '원본',
   'detail.category': '카테고리',
   'detail.tags': '태그',
   'detail.tagPlaceholder': '태그 입력 후 Enter',

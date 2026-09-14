@@ -4,6 +4,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import type { Category, PromptItem, Tag } from '@/lib/db/types';
 import { getItem, softDeleteItem, toggleStar, updateItem } from '@/lib/db/repo';
 import { useBlobUrl } from '@/lib/useBlobUrl';
+import { formatDimensions } from '@/lib/vision/image';
 import { getModelProfile } from '@/lib/vision/models';
 import {
   IconArrowLeft,
@@ -92,6 +93,7 @@ export default function ItemDetail({ itemId, categories, tags, onClose, onAnalyz
   };
 
   const p = item.prompt;
+  const dims = formatDimensions(item.width, item.height);
 
   return (
     <div className="fixed inset-0 z-20 flex flex-col bg-white dark:bg-neutral-950">
@@ -128,8 +130,16 @@ export default function ItemDetail({ itemId, categories, tags, onClose, onAnalyz
         <input
           value={item.title}
           onChange={(e) => updateItem(itemId, { title: e.target.value })}
-          className="mb-3 w-full rounded-md border border-transparent bg-transparent px-1 py-1 text-sm font-medium outline-none hover:border-neutral-200 focus:border-accent dark:hover:border-neutral-700"
+          className="mb-1 w-full rounded-md border border-transparent bg-transparent px-1 py-1 text-sm font-medium outline-none hover:border-neutral-200 focus:border-accent dark:hover:border-neutral-700"
         />
+
+        {/* 记下原图尺寸,用户去生图时才知道该设什么比例 ——
+            这张信息不写进提示词(那是生成参数不是提示词内容) */}
+        {dims && (
+          <div className="mb-3 px-1 text-[10px] text-ink-3">
+            {t('detail.dimensions')} {dims}
+          </div>
+        )}
 
         <div className="mb-3 flex flex-wrap gap-1.5">
           <Button

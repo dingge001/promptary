@@ -55,6 +55,9 @@ const headerBtn =
 
 interface AnalyzeContext {
   imageUrl?: string;
+  /** 原图尺寸。仅用于展示,不参与提示词生成 */
+  width?: number;
+  height?: number;
   /** 本地已有的图片。详情页重新反推时走它,不依赖外部图床还在 */
   imageBlob?: Blob;
   pageUrl?: string;
@@ -87,6 +90,8 @@ export default function App() {
   const [analysisModelId, setAnalysisModelId] = useState('');
   /** 有值表示这次反推是给已有收藏补做或重做提示词,结果写回它而不是新建 */
   const [analysisTargetId, setAnalysisTargetId] = useState<string>();
+  /** 本次反推的原图尺寸,供结果面板提示比例 */
+  const [analysisDims, setAnalysisDims] = useState<{ w?: number; h?: number }>({});
 
   const analysisResultRef = useRef<AnalyzeResult | null>(null);
   const abortRef = useRef<AbortController | null>(null);
@@ -181,6 +186,7 @@ export default function App() {
       abortRef.current = controller;
       setAnalysisCtx(ctx);
       setAnalysisTargetId(targetId);
+      setAnalysisDims({ w: ctx.width, h: ctx.height });
       setAnalysisView({ status: 'running' });
 
       try {
@@ -349,7 +355,14 @@ export default function App() {
     // 多张才进批量队列 —— 逐张确认在批量场景下不现实
     const first = urls[0];
     if (urls.length === 1 && first) {
-      runAnalyze({ imageUrl: first, pageUrl: tab?.url, pageTitle: tab?.title });
+      const picked = pageImages?.find((p) => p.src === first);
+      runAnalyze({
+        imageUrl: first,
+        width: picked?.width,
+        height: picked?.height,
+        pageUrl: tab?.url,
+        pageTitle: tab?.title,
+      });
       return;
     }
 
@@ -568,6 +581,8 @@ export default function App() {
             runAnalyze(
               {
                 imageUrl: item.imageUrl,
+                width: item.width,
+                height: item.height,
                 // 优先用本地图:外部图床可能已经挂掉或加了防盗链
                 imageBlob: item.imageBlob,
                 pageUrl: item.sourceUrl,
@@ -667,6 +682,8 @@ export default function App() {
       <AnalyzeOverlay
         state={analysisView}
         modelId={analysisModelId}
+        sourceWidth={analysisDims.w}
+        sourceHeight={analysisDims.h}
         updating={Boolean(analysisTargetId)}
         onCancel={() => abortRef.current?.abort()}
         onSave={saveAnalysis}

@@ -62,6 +62,7 @@ export const zhCN = {
   'detail.analyzeShort': '反推',
   'detail.prompt': '提示词',
   'detail.negative': '负向提示词',
+  'detail.dimensions': '原图',
   'detail.category': '分类',
   'detail.tags': '标签',
   'detail.tagPlaceholder': '输入标签后回车',

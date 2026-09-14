@@ -56,6 +56,7 @@ export const zhTW: Dict = {
   'detail.analyzeShort': '反推',
   'detail.prompt': '提示詞',
   'detail.negative': '負向提示詞',
+  'detail.dimensions': '原圖',
   'detail.category': '分類',
   'detail.tags': '標籤',
   'detail.tagPlaceholder': '輸入標籤後按 Enter',

@@ -56,6 +56,7 @@ export const en: Dict = {
   'detail.analyzeShort': 'Analyze',
   'detail.prompt': 'Prompt',
   'detail.negative': 'Negative prompt',
+  'detail.dimensions': 'Source',
   'detail.category': 'Category',
   'detail.tags': 'Tags',
   'detail.tagPlaceholder': 'Type a tag and press Enter',

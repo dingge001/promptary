@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { t } from '@/lib/i18n';
 import type { PromptFields } from '@/lib/db/types';
+import { formatDimensions } from '@/lib/vision/image';
 import { MODEL_PROFILES, getModelProfile } from '@/lib/vision/models';
 import { IconCheck, IconClose, IconCopy, IconRefresh } from './icons';
 import { Button, Select } from './ui';
@@ -23,6 +24,9 @@ interface Props {
   state: AnalysisView;
   /** 本次反推使用的模型档案 id */
   modelId: string;
+  /** 原图尺寸,用于提示用户该设什么比例 */
+  sourceWidth?: number;
+  sourceHeight?: number;
   /** 结果会写回这条已有收藏,而不是新建一条 */
   updating?: boolean;
   onCancel: () => void;
@@ -39,6 +43,8 @@ const boxCls =
 export default function AnalyzeOverlay({
   state,
   modelId,
+  sourceWidth,
+  sourceHeight,
   updating = false,
   onCancel,
   onSave,
@@ -53,6 +59,7 @@ export default function AnalyzeOverlay({
   const [copied, setCopied] = useState(false);
 
   const profile = getModelProfile(modelId);
+  const dims = formatDimensions(sourceWidth, sourceHeight);
 
   // 每次拿到新结果就重置编辑区,避免上一条的内容串到下一条
   useEffect(() => {
@@ -132,8 +139,12 @@ export default function AnalyzeOverlay({
         {state.status === 'done' && (
           <>
             {state.imageUrl && (
-              <img src={state.imageUrl} alt="" className="mb-3 max-h-32 w-full rounded-lg object-contain" />
+              <img src={state.imageUrl} alt="" className="mb-1 max-h-32 w-full rounded-lg object-contain" />
             )}
+
+            {/* 原图尺寸不写进提示词 —— 那是生成参数,不是提示词内容。
+                但用户去生图时得知道该设什么比例,所以在这儿给出来 */}
+            {dims && <div className="mb-3 text-[10px] text-ink-3">{t('detail.dimensions')} {dims}</div>}
 
             {/* 同一张图给不同模型用,写法差别很大,所以模型得能随时换 */}
             <div className="mb-3 rounded-lg border border-neutral-200 p-2 dark:border-neutral-800">

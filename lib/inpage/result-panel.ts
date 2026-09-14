@@ -1,5 +1,6 @@
 import { t } from '../i18n';
 import type { AnalyzedPayload } from '../messages';
+import { formatDimensions } from '../vision/image';
 import { MODEL_PROFILES, getModelProfile } from '../vision/models';
 import { PANEL_HOST_ID } from './hosts';
 
@@ -89,6 +90,7 @@ const STYLES = `
                 font-size: 12px; line-height: 1; padding: 0 1px; }
   .tag button:hover { color: #dc2626; }
   .empty { font-size: 10px; color: #71717a; }
+  .hint { font-size: 10px; color: #71717a; margin-bottom: 2px; }
   .foot { display: flex; gap: 6px; padding: 8px 10px; border-top: 1px solid #e7e7e7; }
   .primary { flex: 1; border: 0; border-radius: 7px; background: #c13d2c; color: #fff;
              font: 600 11px/1 system-ui; padding: 9px 0; cursor: pointer; }
@@ -116,7 +118,7 @@ export interface ResultPanelHandlers {
 
 export interface ResultPanel {
   showLoading(): void;
-  showResult(data: AnalyzedPayload, handlers: ResultPanelHandlers): void;
+  showResult(data: AnalyzedPayload, handlers: ResultPanelHandlers, dimensions?: string): void;
   showError(message: string): void;
   hide(): void;
 }
@@ -176,7 +178,7 @@ export function createResultPanel(): ResultPanel {
       `);
     },
 
-    showResult(data, handlers) {
+    showResult(data, handlers, dimensions) {
       const f = data.fields;
       const profile = getModelProfile(data.modelId);
       currentTags = [...f.tags];
@@ -214,6 +216,11 @@ export function createResultPanel(): ResultPanel {
               ).join('')}
             </div>
 
+            ${
+              dimensions
+                ? `<div class="hint">${t('detail.dimensions')} ${esc(dimensions)}</div>`
+                : ''
+            }
             <div class="lbl">${t('analyze.prompt')}</div>
             <textarea class="area" data-el="prompt" rows="6">${esc(f.prompt)}</textarea>
 

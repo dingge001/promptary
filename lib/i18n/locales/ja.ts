@@ -56,6 +56,7 @@ export const ja: Dict = {
   'detail.analyzeShort': '解析',
   'detail.prompt': 'プロンプト',
   'detail.negative': 'ネガティブプロンプト',
+  'detail.dimensions': '元画像',
   'detail.category': 'カテゴリ',
   'detail.tags': 'タグ',
   'detail.tagPlaceholder': 'タグを入力して Enter',
