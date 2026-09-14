@@ -575,7 +575,8 @@ export default function App() {
           categories={categories}
           tags={tags}
           onClose={() => setDetailId(undefined)}
-          onAnalyze={(item) => {
+          defaultModelId={settings?.defaultModelId ?? 'gpt-image'}
+          onAnalyze={(item, modelId) => {
             // 先收起详情,让结果面板露出来
             setDetailId(undefined);
             runAnalyze(
@@ -588,7 +589,7 @@ export default function App() {
                 pageUrl: item.sourceUrl,
                 pageTitle: item.sourceTitle,
               },
-              undefined,
+              modelId,
               item.id,
             );
           }}

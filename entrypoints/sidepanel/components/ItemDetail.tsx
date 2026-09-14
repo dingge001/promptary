@@ -5,7 +5,7 @@ import type { Category, PromptItem, Tag } from '@/lib/db/types';
 import { getItem, softDeleteItem, toggleStar, updateItem } from '@/lib/db/repo';
 import { useBlobUrl } from '@/lib/useBlobUrl';
 import { formatDimensions } from '@/lib/vision/image';
-import { getModelProfile } from '@/lib/vision/models';
+import { getModelProfile, MODEL_PROFILES } from '@/lib/vision/models';
 import {
   IconArrowLeft,
   IconClose,
@@ -22,17 +22,34 @@ interface Props {
   categories: Category[];
   tags: Tag[];
   onClose: () => void;
-  /** 对这张图发起反推。已收藏但还没反推过的图,靠它补上提示词 */
-  onAnalyze: (item: PromptItem) => void;
+  /** 对这张图发起反推。带上用户选的模型,否则他不知道会按哪个模型重推 */
+  onAnalyze: (item: PromptItem, modelId: string) => void;
+  /** 设置里的默认模型,用作选择器的初值 */
+  defaultModelId: string;
 }
 
-export default function ItemDetail({ itemId, categories, tags, onClose, onAnalyze }: Props) {
+export default function ItemDetail({
+  itemId,
+  categories,
+  tags,
+  onClose,
+  onAnalyze,
+  defaultModelId,
+}: Props) {
   // 订阅式读取:在别处修改了这条记录,详情页会自动刷新
   const item = useLiveQuery(() => getItem(itemId), [itemId]);
   const imageUrl = useBlobUrl(item?.imageBlob);
 
   const [toast, setToast] = useState<string>();
   const [tagInput, setTagInput] = useState('');
+  // 优先沿用这条记录当初用的模型,用户想换再换
+  const [pickModel, setPickModel] = useState(defaultModelId);
+
+  // item 是订阅式异步读取的,拿到之后才知道这条当初用的哪个模型。
+  // 沿用它可以避免用户每点一次「重新反推」都被拽回默认模型。
+  useEffect(() => {
+    if (item?.targetModel) setPickModel(item.targetModel);
+  }, [item?.targetModel]);
 
   // 记录被删除后自动关掉详情,避免停留在一个已经不存在的条目上
   useEffect(() => {
@@ -165,12 +182,28 @@ export default function ItemDetail({ itemId, categories, tags, onClose, onAnalyz
             icon={<IconInject />}
             onClick={injectToPage}
           />
+                  </div>
+
+        {/* 反推按哪个模型的格式生成,得让用户看得见也改得了 ——
+            塞在设置里的话,用户点「重新反推」根本不知道会走哪个 */}
+        <div className="mb-3 flex items-center gap-1.5">
+          <Select
+            size="sm"
+            className="min-w-0 flex-1"
+            value={pickModel}
+            onChange={setPickModel}
+            options={MODEL_PROFILES.map((m) => ({
+              value: m.id,
+              label: m.name,
+              group: m.group,
+            }))}
+          />
           <Button
             size="sm"
             variant="accent"
             title={item.prompt ? t('detail.reanalyze') : t('detail.analyze')}
             icon={<IconSparkle />}
-            onClick={() => onAnalyze(item)}
+            onClick={() => onAnalyze(item, pickModel)}
           >
             {item.prompt ? t('detail.reanalyzeShort') : t('detail.analyzeShort')}
           </Button>
