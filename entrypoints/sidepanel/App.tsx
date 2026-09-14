@@ -698,7 +698,7 @@ export default function App() {
       {showBatch && <BatchProgress onClose={() => setShowBatch(false)} />}
 
       {toast && (
-        <div className="pointer-events-none fixed bottom-4 left-1/2 z-50 -translate-x-1/2 rounded-full bg-neutral-900 px-3 py-1.5 text-[11px] text-white shadow-lg dark:bg-neutral-100 dark:text-ink">
+        <div className="pointer-events-none fixed bottom-4 left-1/2 z-50 -translate-x-1/2 rounded-full bg-ink px-3 py-1.5 text-[11px] text-canvas shadow-lg">
           {toast}
         </div>
       )}
