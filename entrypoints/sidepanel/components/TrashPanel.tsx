@@ -2,12 +2,8 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { t } from '@/lib/i18n';
 import { emptyTrash, hardDeleteItem, listDeletedItems, restoreItem } from '@/lib/db/repo';
 import { useBlobUrl } from '@/lib/useBlobUrl';
-import { IconArrowLeft, IconRestore, IconTrash } from './icons';
+import { IconRestore, IconTrash } from './icons';
 import { Button } from './ui';
-
-interface Props {
-  onClose: () => void;
-}
 
 function formatTime(ts?: number): string {
   if (!ts) return '';
@@ -17,11 +13,11 @@ function formatTime(ts?: number): string {
 }
 
 /** 回收站。删除的收藏先落这里,给用户一个反悔的机会 */
-export default function TrashPanel({ onClose }: Props) {
+export default function TrashPanel() {
   const items = useLiveQuery(() => listDeletedItems(), []);
 
   return (
-    <div className="fixed inset-0 z-20 flex flex-col bg-white dark:bg-neutral-950">
+    <div className="flex min-h-0 flex-1 flex-col">
       <div className="flex items-center justify-between border-b border-neutral-200 px-3 py-2 dark:border-neutral-800">
         <span className="text-xs font-medium">{t('trash.title')}</span>
         <div className="flex gap-1.5">
@@ -39,7 +35,7 @@ export default function TrashPanel({ onClose }: Props) {
               }}
             />
           )}
-          <Button size="sm" square onClick={onClose} title={t('common.back')} icon={<IconArrowLeft />} />
+          
         </div>
       </div>
 

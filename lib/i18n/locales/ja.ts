@@ -21,6 +21,7 @@ export const ja: Dict = {
   'app.pickImage': 'このページから画像を選ぶ',
   'app.select': '複数選択',
   'app.exitSelect': '選択を終了',
+  'app.library': 'ライブラリ',
   'app.trash': 'ゴミ箱',
   'app.settings': '設定',
   'search.placeholder': 'タイトル・プロンプト・タグを検索…',

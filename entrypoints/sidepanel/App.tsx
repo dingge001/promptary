@@ -34,8 +34,8 @@ import CategoryManager from './components/CategoryManager';
 import {
   IconCheck,
   IconCheckSquare,
-  IconClose,
   IconGrid,
+  IconLibrary,
   IconSearch,
   IconSettings,
   IconSliders,
@@ -393,35 +393,39 @@ export default function App() {
 
         <div className="flex-1" />
 
-        <button type="button" onClick={pickFromPage} className={headerBtn} title={t('app.pickImage')}>
+        {/* 顺序即使用频率:选图 → 库 → 回收站 → 设置。
+            当前所在的位置用朱砂色标出来,用户一眼知道自己在哪 */}
+        <button
+          type="button"
+          onClick={pickFromPage}
+          className={headerBtn}
+          title={t('app.pickImage')}
+        >
           <IconGrid />
         </button>
         <button
           type="button"
-          onClick={() => {
-            setSelectMode((v) => !v);
-            setSelectedIds([]);
-          }}
-          className={`${headerBtn} ${selectMode ? 'border-accent text-accent' : ''}`}
-          title={selectMode ? t('app.exitSelect') : t('app.select')}
+          onClick={() => setView('library')}
+          className={`${headerBtn} ${view === 'library' ? 'border-accent text-accent' : ''}`}
+          title={t('app.library')}
         >
-          <IconCheckSquare />
+          <IconLibrary />
         </button>
         <button
           type="button"
-          onClick={() => setView(view === 'trash' ? 'library' : 'trash')}
-          className={headerBtn}
+          onClick={() => setView('trash')}
+          className={`${headerBtn} ${view === 'trash' ? 'border-accent text-accent' : ''}`}
           title={t('app.trash')}
         >
           <IconTrash />
         </button>
         <button
           type="button"
-          onClick={() => setView(view === 'settings' ? 'library' : 'settings')}
-          className={headerBtn}
-          title={view === 'settings' ? t('common.back') : t('app.settings')}
+          onClick={() => setView('settings')}
+          className={`${headerBtn} ${view === 'settings' ? 'border-accent text-accent' : ''}`}
+          title={t('app.settings')}
         >
-          {view === 'settings' ? <IconClose /> : <IconSettings />}
+          <IconSettings />
         </button>
       </header>
 
@@ -432,11 +436,11 @@ export default function App() {
           <div className="flex-1 p-4 text-[11px] text-neutral-400">{t('common.loading')}</div>
         )
       ) : view === 'trash' ? (
-        <TrashPanel onClose={() => setView('library')} />
+        <TrashPanel />
       ) : (
         <>
-          <div className="border-b border-neutral-200 px-2 py-1.5 dark:border-neutral-800">
-            <div className="relative">
+          <div className="flex items-center gap-1.5 border-b border-neutral-200 px-2 py-1.5 dark:border-neutral-800">
+            <div className="relative min-w-0 flex-1">
               <IconSearch className="pointer-events-none absolute left-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-neutral-400" />
               <input
                 value={keyword}
@@ -445,6 +449,19 @@ export default function App() {
                 className="w-full rounded-md border border-neutral-300 bg-transparent py-1.5 pl-7 pr-2 text-[11px] outline-none focus:border-accent dark:border-neutral-700"
               />
             </div>
+
+            {/* 批量选择和筛选是一类操作,放在这里比挤在顶栏更顺 */}
+            <Button
+              size="sm"
+              square
+              variant={selectMode ? 'accent' : 'secondary'}
+              onClick={() => {
+                setSelectMode((v) => !v);
+                setSelectedIds([]);
+              }}
+              title={selectMode ? t('app.exitSelect') : t('app.select')}
+              icon={<IconCheckSquare />}
+            />
           </div>
 
           {(tree.length > 0 || (tags && tags.length > 0)) && (

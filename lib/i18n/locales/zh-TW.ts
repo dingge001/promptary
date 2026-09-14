@@ -22,6 +22,7 @@ export const zhTW: Dict = {
   'app.pickImage': '從目前頁面選圖',
   'app.select': '批次選取',
   'app.exitSelect': '結束批次選取',
+  'app.library': '提示詞管理',
   'app.trash': '回收筒',
   'app.settings': '設定',
   'search.placeholder': '搜尋標題、提示詞、標籤…',

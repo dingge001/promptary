@@ -21,6 +21,7 @@ export const en: Dict = {
   'app.pickImage': 'Pick image from page',
   'app.select': 'Select multiple',
   'app.exitSelect': 'Exit selection',
+  'app.library': 'Library',
   'app.trash': 'Trash',
   'app.settings': 'Settings',
   'search.placeholder': 'Search title, prompt, tags…',

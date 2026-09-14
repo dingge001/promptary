@@ -25,6 +25,7 @@ export const zhCN = {
   'app.pickImage': '从当前页选图',
   'app.select': '批量选择',
   'app.exitSelect': '退出批量选择',
+  'app.library': '提示词管理',
   'app.trash': '回收站',
   'app.settings': '设置',
   'search.placeholder': '搜索标题、提示词、标签…',

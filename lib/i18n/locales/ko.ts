@@ -21,6 +21,7 @@ export const ko: Dict = {
   'app.pickImage': '현재 페이지에서 이미지 선택',
   'app.select': '여러 개 선택',
   'app.exitSelect': '선택 종료',
+  'app.library': '라이브러리',
   'app.trash': '휴지통',
   'app.settings': '설정',
   'search.placeholder': '제목, 프롬프트, 태그 검색…',
