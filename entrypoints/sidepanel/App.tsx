@@ -95,6 +95,11 @@ export default function App() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [toast, setToast] = useState<string>();
 
+  // 四个顶栏按钮的激活条件必须互斥:选图面板是在库视图之上叠出来的,
+  // view 此时仍是 library,直接用 view 判断会让「选图」和「库」同时亮起来
+  const inPicker = view === 'library' && Boolean(pageImages);
+  const inLibrary = view === 'library' && !pageImages;
+
   const [analysisView, setAnalysisView] = useState<AnalysisView>({ status: 'idle' });
   const [analysisCtx, setAnalysisCtx] = useState<AnalyzeContext>({});
   /** 本次反推用的目标模型档案 id,结果面板据此决定显示哪些字段 */
@@ -417,7 +422,7 @@ export default function App() {
               void pickFromPage();
             }
           }}
-          className={headerBtn(Boolean(pageImages))}
+          className={headerBtn(inPicker)}
           title={t('app.pickImage')}
         >
           <IconGrid />
@@ -430,7 +435,7 @@ export default function App() {
             setDetailId(undefined);
             setView('library');
           }}
-          className={headerBtn(view === 'library')}
+          className={headerBtn(inLibrary)}
           title={t('app.library')}
         >
           <IconLibrary />
