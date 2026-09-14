@@ -162,13 +162,27 @@ function collectImages(): PageImage[] {
   const seen = new Set<string>();
 
   return Array.from(document.images)
-    .filter((img) => img.naturalWidth >= MIN_EDGE && img.naturalHeight >= MIN_EDGE)
-    .map((img) => ({
-      src: img.currentSrc || img.src,
-      width: img.naturalWidth,
-      height: img.naturalHeight,
-      alt: img.alt || '',
-    }))
+    .map((img) => {
+      // 懒加载站点的图往往还没真正加载,src 是占位符、naturalWidth 是 0。
+      // 依次尝试各个常见的懒加载属性,尽量还原出真实地址。
+      const src =
+        img.currentSrc ||
+        img.src ||
+        img.getAttribute('data-src') ||
+        img.getAttribute('data-original') ||
+        img.getAttribute('data-lazy-src') ||
+        img.getAttribute('data-actualsrc') ||
+        '';
+
+      // 尺寸同理:没加载出来时 naturalWidth 为 0,退回元素的实际显示尺寸。
+      // 早先只用 naturalWidth 判断,导致懒加载图片全被当成小图过滤掉了。
+      const rect = img.getBoundingClientRect();
+      const width = img.naturalWidth || Math.round(rect.width);
+      const height = img.naturalHeight || Math.round(rect.height);
+
+      return { src, width, height, alt: img.alt || '', loaded: img.naturalWidth > 0 };
+    })
+    .filter((img) => img.src && img.width >= MIN_EDGE && img.height >= MIN_EDGE)
     .filter((img) => {
       if (!img.src || seen.has(img.src)) return false;
       seen.add(img.src);

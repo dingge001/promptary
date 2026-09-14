@@ -325,20 +325,35 @@ async function handleCancelBatch(): Promise<BackgroundResponse> {
   return { ok: true, data: null };
 }
 
+/**
+ * 同时处理几张图。
+ *
+ * 不设成 1(太慢)也不设成无限(几乎必然触发服务商限流,反而更容易失败)。
+ * 3 是常见模型服务的舒适区,遇到 429 说明该调小。
+ */
+const BATCH_CONCURRENCY = 3;
+
 async function runBatch(
   job: BatchJob,
   msg: Extract<BackgroundRequest, { type: 'startBatch' }>,
   settings: AppSettings,
 ): Promise<void> {
   const ctx = { pageUrl: msg.pageUrl, pageTitle: msg.pageTitle };
+  const queue = [...msg.urls];
+  let cursor = 0;
 
-  try {
-    for (const url of msg.urls) {
+  // 几个 worker 并行取任务。JS 单线程,所以 cursor++ 和 job.done++ 不会有竞态,
+  // 真正需要小心的是别让并发数失控 —— 那会招来服务商的限流。
+  const worker = async (): Promise<void> => {
+    while (cursor < queue.length) {
+      const url = queue[cursor++];
+      if (!url) return;
+
       // 每轮重读一次,才能感知到用户中途点了「取消」
       const fresh = await loadBatchJob();
       if (fresh?.status === 'cancelled') {
         job.status = 'cancelled';
-        break;
+        return;
       }
 
       try {
@@ -373,7 +388,13 @@ async function runBatch(
       job.done++;
       await saveBatchJob(job);
     }
+  };
 
+  try {
+    // 起若干个 worker 一起跑。取并发数和任务数的较小值,避免为两张图开三个 worker
+    await Promise.all(
+      Array.from({ length: Math.min(BATCH_CONCURRENCY, queue.length) }, () => worker()),
+    );
     if (job.status === 'running') job.status = 'done';
   } catch (err) {
     job.status = 'error';
@@ -435,10 +456,12 @@ async function refreshMenu(): Promise<void> {
       title: t('menu.pickImage'),
       contexts: ['page', 'selection'],
     });
+    // 用 all 而不是 page:在图片、链接、选中文字上右键时也应该能打开面板 ——
+    // 之前的 'page' 只在页面空白处出现,用户在图片上右键就找不到入口
     chrome.contextMenus.create({
       id: 'promptary-open-panel',
       title: t('menu.openPanel'),
-      contexts: ['page'],
+      contexts: ['all'],
     });
   });
 }

@@ -28,6 +28,8 @@ export interface PageImage {
   width: number;
   height: number;
   alt: string;
+  /** 图片是否已真正加载。懒加载站点上未加载的图尺寸是按显示区估算的 */
+  loaded?: boolean;
 }
 
 /** 发给 content script 的指令 */
