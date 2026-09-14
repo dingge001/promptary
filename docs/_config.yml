@@ -1,0 +1,14 @@
+# GitHub Pages 配置。
+# 站点从 /docs 目录发布,PRIVACY.md 会被自动渲染成网页。
+
+title: Promptary
+description: Reverse-engineer any web image into a ready-to-use AI art prompt.
+theme: jekyll-theme-minimal
+
+# design/ 里是设计过程的素材(抓取的 CSS、logo 迭代稿),
+# 跟站点无关,而且 styles.css 有 48KB —— 别混进发布产物里
+exclude:
+  - design/
+
+# README 里是给仓库访客看的说明,不是站点首页
+# (想让它当首页就把这行删掉)
