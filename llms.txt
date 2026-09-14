@@ -1,0 +1,38 @@
+# Promptary
+
+> A Chrome extension that reverse-engineers images on the web into AI art prompts, and manages the resulting prompt library. Prompts are generated in the specific format each target model expects (Stable Diffusion, FLUX, Midjourney, GPT-Image, nano banana, Seedream) rather than one generic format. Local-first: no account, no server, bring your own API key.
+
+Promptary solves a specific problem that generic "image to prompt" tools do not: the same image must be written differently for each image-generation model. Stable Diffusion wants comma-separated tags with weights and a negative prompt; FLUX wants full sentences and is actively harmed by quality tags; Midjourney wants trailing `--ar`/`--style`/`--v` parameters; Seedream works best in Chinese. Tools that ignore this produce prompts the user still has to rewrite.
+
+## Key facts
+
+- Platform: Chrome extension, Manifest V3, Chrome 114+
+- Source: https://github.com/dingge001/promptary
+- License: MIT
+- Language: TypeScript, React, WXT, Tailwind, Dexie (IndexedDB)
+- Interface languages: English, Simplified Chinese, Traditional Chinese, Japanese, Korean
+- Data storage: local IndexedDB only. No backend, no telemetry, no analytics.
+- Model access: bring your own key, any OpenAI-compatible endpoint
+
+## Docs
+
+- [README](./README.md): overview, features, install, usage
+- [README (Chinese)](./README.zh-CN.md): 中文版说明
+- [CONTRIBUTING.md](./CONTRIBUTING.md): how to add a model profile — the primary contribution path
+- [docs/PRD.md](./docs/PRD.md): product requirements and the reasoning behind key decisions
+- [docs/PRIVACY.md](./docs/PRIVACY.md): full privacy policy
+- [docs/store-listing.md](./docs/store-listing.md): Chrome Web Store listing copy
+- [docs/design/design-spec.md](./docs/design/design-spec.md): the design system
+
+## Source layout
+
+- `lib/vision/models.ts` — the model profiles. This is the core asset: each entry carries the format rules and a worked example for one target model.
+- `lib/vision/schema.ts` — assembles the per-model system prompt sent to the vision model.
+- `lib/db/` — Dexie data layer. UUID primary keys, soft deletes, and `updatedAt`/`syncState` fields are pre-seeded for a future sync feature.
+- `lib/i18n/` — five locale files, typed against the Simplified Chinese baseline so a missing key fails the build.
+- `entrypoints/` — `background.ts` (context menus, model calls), `content.ts` (page DOM), `sidepanel/` (main UI).
+
+## Optional
+
+- [docs/PRIVACY.zh-CN.md](./docs/PRIVACY.zh-CN.md): 隐私政策中文版
+- [docs/design/design-tokens.html](./docs/design/design-tokens.html): visual token reference

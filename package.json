@@ -1,6 +1,21 @@
 {
   "name": "promptary",
-  "description": "提示词收藏、图片反推与标签管理",
+  "description": "Reverse-engineer any web image into a ready-to-use AI art prompt. Local-first Chrome extension, bring your own API key.",
+  "keywords": [
+    "chrome-extension",
+    "ai-art",
+    "prompt-engineering",
+    "image-to-prompt",
+    "reverse-engineer-prompt",
+    "stable-diffusion",
+    "midjourney",
+    "flux",
+    "seedream",
+    "gpt-image",
+    "prompt-manager",
+    "manifest-v3",
+    "local-first"
+  ],
   "private": true,
   "version": "0.1.0",
   "type": "module",
