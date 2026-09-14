@@ -158,7 +158,7 @@ export default function ItemDetail({
           </div>
         )}
 
-        <div className="mb-3 flex flex-wrap gap-1.5">
+        <div className="mb-3 flex flex-nowrap items-center gap-1.5">
           <Button
             size="sm"
             square
@@ -182,14 +182,12 @@ export default function ItemDetail({
             icon={<IconInject />}
             onClick={injectToPage}
           />
-                  </div>
-
-        {/* 反推按哪个模型的格式生成,得让用户看得见也改得了 ——
-            塞在设置里的话,用户点「重新反推」根本不知道会走哪个 */}
-        <div className="mb-3 flex items-center gap-1.5">
+                  {/* 反推按哪个模型的格式生成,得让用户看得见也改得了 ——
+              塞在设置里的话,用户点「重新反推」根本不知道会走哪个。
+              下拉用固定窄宽度而不是 flex-1,否则会把这一行撑到换行 */}
           <Select
             size="sm"
-            className="min-w-0 flex-1"
+            className="w-24 shrink-0"
             value={pickModel}
             onChange={setPickModel}
             options={MODEL_PROFILES.map((m) => ({
