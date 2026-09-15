@@ -15,9 +15,12 @@ jobs:
         with:
           version: 10
 
+      # 用 24 而不是 22:服务端的配额存储依赖 node:sqlite(22.5+ 内置,
+      # 但 22.x 早期版本调用它还需要 --experimental-sqlite),24 上开箱可用。
+      # 也和本地开发环境保持一致 —— 扩展侧在 24 上构建是通过的
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
           cache: pnpm
 
       - name: 安装依赖
@@ -30,3 +33,16 @@ jobs:
 
       - name: 构建
         run: pnpm build
+
+      # 服务端与扩展同仓库,一并覆盖。测试用本地 mock 上游,不需要真实 API Key
+      - name: 安装服务端依赖
+        run: pnpm install --frozen-lockfile
+        working-directory: server
+
+      - name: 服务端类型检查
+        run: pnpm typecheck
+        working-directory: server
+
+      - name: 服务端测试
+        run: pnpm test
+        working-directory: server

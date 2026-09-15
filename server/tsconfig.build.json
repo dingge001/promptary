@@ -1,0 +1,5 @@
+{
+  "extends": "./tsconfig.json",
+  "//": "typecheck 要连测试一起检查,构建则不必把测试代码带进 dist",
+  "exclude": ["src/**/*.test.ts"]
+}

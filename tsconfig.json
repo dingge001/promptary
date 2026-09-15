@@ -2,5 +2,7 @@
   "extends": "./.wxt/tsconfig.json",
   "compilerOptions": {
     "jsx": "react-jsx"
-  }
+  },
+  "//": "exclude 会覆盖父级的同名配置(不合并),所以要把 .wxt 里的两条一并抄过来;server 是 Node 项目,有自己的 tsconfig,不能拿 DOM 环境去检查",
+  "exclude": ["server", "node_modules", ".output"]
 }

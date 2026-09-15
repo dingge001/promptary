@@ -1,0 +1,31 @@
+{
+  "name": "promptary-api",
+  "description": "Promptary 的内置额度代理：鉴权、每日配额与全局预算熔断",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "engines": {
+    "//": "node:sqlite 自 22.5 内置,--env-file-if-exists 自 22.9 起支持。建议直接用 24 LTS",
+    "node": ">=22.9.0"
+  },
+  "scripts": {
+    "dev": "tsx watch --env-file-if-exists=.env src/index.ts",
+    "build": "tsc -p tsconfig.build.json",
+    "start": "node --env-file-if-exists=.env dist/index.js",
+    "test": "tsx --test src/quota.test.ts src/app.test.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.13.7",
+    "hono": "^4.6.14"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.9.3"
+  },
+  "pnpm": {
+    "//": "pnpm 10 默认不跑依赖的构建脚本,esbuild(tsx 的依赖)那个得放行",
+    "onlyBuiltDependencies": ["esbuild"]
+  }
+}

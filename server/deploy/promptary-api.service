@@ -1,0 +1,25 @@
+[Unit]
+Description=Promptary API (内置额度代理)
+After=network.target
+
+[Service]
+Type=simple
+# 专用的系统用户,无登录 shell —— 这个服务只需要往外出网,不需要任何系统权限
+User=promptary
+Group=promptary
+WorkingDirectory=/srv/promptary-api
+EnvironmentFile=/srv/promptary-api/.env
+ExecStart=/usr/bin/node dist/index.js
+
+Restart=always
+RestartSec=5
+
+# 加固:进程只能写自己的 data 目录,系统其余部分只读
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/srv/promptary-api/data
+
+[Install]
+WantedBy=multi-user.target
