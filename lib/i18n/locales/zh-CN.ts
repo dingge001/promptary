@@ -4,10 +4,7 @@
  */
 export const zhCN = {
   // ---------- 通用 ----------
-  'settings.about': '关于',
   'settings.githubRepo': 'GitHub 仓库',
-  'settings.githubHint': '开源项目,欢迎提 Issue 或 PR —— 新增生图模型的支持尤其欢迎。',
-  'settings.reportIssue': '反馈问题',
   'common.close': '关闭',
   'common.cancel': '取消',
   'common.save': '保存',
@@ -26,6 +23,10 @@ export const zhCN = {
   'app.select': '批量选择',
   'app.exitSelect': '退出批量选择',
   'app.library': '提示词管理',
+  'app.quotaLeft': '剩 {count} 次',
+  'app.quotaLeftHint': '今日免费额度。在设置里换成自己的 API Key 就不受次数限制。',
+  'disclosure.body':
+    '使用官方免费额度时,图片会经 Promptary 服务器转发给模型服务商。我们不保留图片和提示词,只记录一个匿名设备标识与每日使用次数。\n\n不希望任何内容经过我们?可以在设置里改用你自己的 API Key。',
   'app.trash': '回收站',
   'app.settings': '设置',
   'search.placeholder': '搜索标题、提示词、标签…',
@@ -42,7 +43,9 @@ export const zhCN = {
   // ---------- 页内选图 ----------
   'picker.title': '选择要反推的图片',
   'picker.empty':
-    '没有采集到图片。可能是页面还没加载完,或者这个页面不允许扩展注入(比如浏览器内置页面)。也可以直接在图片上点右键反推。',
+    '这一页没有找到可用的图片。可能还在加载,或者图片都小于 200px 被过滤掉了。也可以直接在图片上点右键反推。',
+  'picker.noAccess':
+    '读不到这个页面的图片。浏览器内置页面不允许扩展读取,请换一个普通网页;如果本来就是普通网页,刷新一次再试。',
   'picker.analyzeOne': '反推这张',
   'picker.analyzeN': '反推选中的 {count} 张',
 
@@ -98,6 +101,23 @@ export const zhCN = {
 
   // ---------- 设置 ----------
   'settings.provider': '模型服务',
+
+  // 渠道:官方提供 vs 自己配置
+  'settings.channelBuiltin': '官方提供',
+  'settings.channelBuiltinHint':
+    '开箱即用,不用配置。每天有免费次数,用完了可以换成自己的服务。',
+  'settings.channelCustom': '自己配置',
+  'settings.channelCustomHint': '填自己的 OpenAI 兼容服务,不受次数限制。',
+  'settings.currentChannel': '使用中',
+  'settings.vendor': '服务商',
+  'settings.quotaRemaining': '今日剩余',
+  'settings.quotaValue': '{remaining} / {limit} 次',
+  'settings.quotaLoading': '读取中…',
+  'settings.quotaUnavailable': '暂时读不到',
+  'settings.quotaResetHint': '额度每天北京时间 0 点重置。',
+  'settings.builtinPrivacy':
+    '官方渠道的请求会经 Promptary 服务器转发,但不会留存你的图片。图片按网址直传时,图片本身不经过服务器。',
+
   'settings.providerHint':
     '需要支持图像输入的模型。填你自己的 API Key,数据不经过任何第三方服务器。',
   'settings.baseUrl': '接口地址(baseUrl)',
@@ -128,7 +148,7 @@ export const zhCN = {
   'settings.sdChineseWarning':
     'Stable Diffusion 系的标签是用英文语料训练的,中文提示词出图质量会明显下降。真要用中文,建议换个目标模型。',
   'settings.promptPreview': '查看实际发送的提示词',
-  'settings.promptPreviewHint': '这是按当前设置拼装、真正发给模型的系统提示词。模型表现不对时,先看这里。',
+  'settings.promptPreviewHide': '收起',
   'settings.behavior': '行为',
   'settings.hoverButton': '图片悬停快捷按钮',
   'settings.hoverButtonHint':
@@ -230,6 +250,10 @@ export const zhCN = {
   'item.untitled': '未命名图片',
   'batch.noImages': '没有选中任何图片',
   'batch.alreadyRunning': '已有一个批量任务在进行中',
+  'batch.quotaExhausted':
+    '今天的免费额度已经用完。明天会重置,也可以在设置里换成自己的 API Key,那样不受次数限制。',
+  'batch.quotaLimited':
+    '今天还剩 {remaining} 次免费额度,但你选了 {count} 张。\n\n点「确定」只反推前 {remaining} 张;点「取消」先不开始,可以去设置里换成自己的 API Key(不受次数限制)。',
   'error.noApiKey': '尚未配置 API Key,请先到设置页填写',
   'error.noBaseUrl': '模型服务地址或模型名称为空,请先到设置页填写',
   'error.connectFailed': '无法连接到模型服务:{message}',
@@ -238,6 +262,8 @@ export const zhCN = {
   'error.rateLimit': '触发限流,请稍后再试',
   'error.httpStatus': '模型接口返回 {status}{hint}:{detail}',
   'error.emptyResponse': '模型没有返回内容,可能是模型不支持图像输入',
+  'error.thinkingAteBudget':
+    '模型的思考过程用光了输出长度上限,没给正文留空间。换一个非推理模型,或调高该模型的最大输出长度。',
   'error.badJson': '模型没有返回合法的 JSON,请重试或换一个更听话的模型',
   'error.noPrompt': '模型没有产出提示词内容,请重试',
   'error.noImageData': '没有拿到可用的图片数据',
@@ -253,7 +279,8 @@ export const zhCN = {
   'model.mj.hint': 'Midjourney V7 / V8.2 / niji —— 简洁描述 + 尾部参数',
   'model.gptImage.hint': 'GPT-Image 2.5(Flare / Sunburst)—— 能吃很长的详细描述',
   'model.nanoBanana.hint': 'Gemini 图像模型 —— 描述式输入,文字渲染很准',
-  'model.seedream.hint': 'Seedream 5.0 Pro / 即梦 —— 中文描述效果最好',  'inpage.tagPlaceholder': '输入标签后回车添加',
+  'model.seedream.hint': 'Seedream 5.0 Pro / 即梦 —— 中文描述效果最好',
+  'inpage.tagPlaceholder': '输入标签后回车添加',
 } as const;
 
 /** 其余语言包按这个类型约束,漏翻一条就编译不过 */

@@ -3,7 +3,8 @@ import { categoryLabel, getLocale } from '../i18n';
 import { t } from '../i18n';
 import type { AppSettings, PromptFields } from '../db/types';
 import { chatCompletion } from '../providers/openai';
-import { ProviderError, type ChatMessage } from '../providers/types';
+import { ProviderError, type ChatMessage, type QuotaInfo } from '../providers/types';
+import { resolveProvider } from '../settings';
 import {
   decideStrategy,
   fetchImageBlob,
@@ -41,6 +42,8 @@ export interface AnalyzeOptions {
   /** 目标模型档案 id;不传则用设置里的默认模型 */
   modelId?: string;
   signal?: AbortSignal;
+  /** 官方渠道返回的额度,原样透传出去 —— 界面拿它显示「还剩几次」 */
+  onQuota?: (quota: QuotaInfo) => void;
 }
 
 /** system prompt 按目标模型动态生成 —— 换模型就换一整套规则和示例 */
@@ -94,6 +97,9 @@ export async function analyzeImage(
   const { signal } = options;
   const profile = getModelProfile(options.modelId ?? settings.defaultModelId);
 
+  // 官方渠道还是自带 Key,在这里分岔。只解析一次,后面全程复用
+  const provider = await resolveProvider(settings);
+
   // 自动归类:开关打开、且用户确实建了分类时,才把分类清单交给模型判断
   const categories = settings.autoCategorize
     ? (await listCategories()).map((c) => categoryLabel(c.name))
@@ -102,14 +108,14 @@ export async function analyzeImage(
   const language = resolveLanguage(profile, settings.promptLanguage, getLocale());
 
   const sourceSite = siteOf(input.pageUrl);
-  const preferred = decideStrategy(input.imageUrl, settings.provider.imageTransfer);
+  const preferred = decideStrategy(input.imageUrl, provider.imageTransfer);
 
   if (preferred === 'url' && input.imageUrl) {
     try {
       const raw = await chatCompletion(
-        settings.provider,
+        provider,
         buildMessages(input, input.imageUrl, profile, categories, language),
-        { json: true, signal },
+        { json: true, signal, onQuota: options.onQuota },
       );
       const fields = parsePromptFields(raw);
       return {
@@ -131,9 +137,9 @@ export async function analyzeImage(
 
   const processed = await processImage(blob);
   const raw = await chatCompletion(
-    settings.provider,
+    provider,
     buildMessages(input, processed.dataUrl, profile, categories, language),
-    { json: true, signal },
+    { json: true, signal, onQuota: options.onQuota },
   );
   const fields = parsePromptFields(raw);
 

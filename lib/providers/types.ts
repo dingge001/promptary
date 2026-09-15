@@ -26,10 +26,30 @@ export interface ChatMessage {
   content: string | ContentPart[];
 }
 
+/**
+ * 官方渠道的剩余额度。
+ *
+ * 定义在协议层而不是 builtin.ts,是因为它要穿过 chatCompletion ——
+ * 让通用调用层反过来依赖具体渠道的类型,层次就倒了。
+ */
+export interface QuotaInfo {
+  used: number;
+  limit: number;
+  /** 额度重置时刻(毫秒时间戳) */
+  resetAt: number;
+}
+
 export interface ChatOptions {
   /** 要求模型返回严格 JSON */
   json?: boolean;
   signal?: AbortSignal;
+  /**
+   * 响应头里带回的额度。
+   *
+   * 只有官方渠道会带(自带 Key 没有这个概念),所以是可选的 ——
+   * 调用方不传就当作不关心。
+   */
+  onQuota?: (quota: QuotaInfo) => void;
 }
 
 /** 模型服务调用失败的统一错误类型,便于 UI 区分「配置错」和「网络错」 */

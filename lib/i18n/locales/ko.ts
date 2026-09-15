@@ -1,10 +1,7 @@
 import type { Dict } from './zh-CN';
 
 export const ko: Dict = {
-  'settings.about': '정보',
   'settings.githubRepo': 'GitHub 저장소',
-  'settings.githubHint': '오픈 소스입니다. Issue와 PR을 환영합니다(특히 새 이미지 모델 지원).',
-  'settings.reportIssue': '문제 신고',
   'common.close': '닫기',
   'common.cancel': '취소',
   'common.save': '저장',
@@ -22,6 +19,11 @@ export const ko: Dict = {
   'app.select': '여러 개 선택',
   'app.exitSelect': '선택 종료',
   'app.library': '라이브러리',
+  'app.quotaLeft': '{count}회 남음',
+  'app.quotaLeftHint':
+    '오늘의 무료 횟수입니다. 설정에서 자신의 API 키로 바꾸면 횟수 제한이 없습니다.',
+  'disclosure.body':
+    '공식 무료 횟수를 사용하면 이미지가 Promptary 서버를 거쳐 모델 제공사로 전달됩니다. 이미지와 프롬프트는 보관하지 않으며, 익명 기기 식별자와 일일 사용 횟수만 기록합니다.\n\n저희를 거치지 않게 하려면 설정에서 자신의 API 키로 바꾸면 됩니다.',
   'app.trash': '휴지통',
   'app.settings': '설정',
   'search.placeholder': '제목, 프롬프트, 태그 검색…',
@@ -38,7 +40,9 @@ export const ko: Dict = {
 
   'picker.title': '프롬프트를 추출할 이미지 선택',
   'picker.empty':
-    '이미지를 찾지 못했습니다. 페이지가 아직 로딩 중이거나, 브라우저 내부 페이지처럼 확장 프로그램을 실행할 수 없는 페이지일 수 있습니다. 이미지를 직접 오른쪽 버튼으로 클릭해도 됩니다.',
+    '이 페이지에서 사용할 수 있는 이미지를 찾지 못했습니다. 아직 로딩 중이거나, 모든 이미지가 200px 미만이라 걸러졌을 수 있습니다. 이미지를 직접 오른쪽 버튼으로 클릭해도 됩니다.',
+  'picker.noAccess':
+    '이 페이지의 이미지를 읽을 수 없습니다. 브라우저 내부 페이지에서는 확장 프로그램을 실행할 수 없습니다. 일반 웹 페이지에서 시도해 주세요. 일반 페이지라면 새로 고친 뒤 다시 시도해 주세요.',
   'picker.analyzeOne': '이 이미지 분석',
   'picker.analyzeN': '선택한 {count}장 분석',
 
@@ -90,6 +94,23 @@ export const ko: Dict = {
   'analyze.copyPromptText': '프롬프트 복사',
 
   'settings.provider': '모델 서비스',
+
+  'settings.channelBuiltin': '공식 제공',
+  'settings.channelBuiltinHint':
+    '설정 없이 바로 사용할 수 있습니다. 하루 무료 횟수가 있으며, 부족하면 직접 설정한 서비스로 바꿀 수 있습니다.',
+  'settings.channelCustom': '직접 설정',
+  'settings.channelCustomHint':
+    '자신의 OpenAI 호환 서비스를 사용합니다. 횟수 제한이 없습니다.',
+  'settings.currentChannel': '사용 중',
+  'settings.vendor': '제공사',
+  'settings.quotaRemaining': '오늘 남은 횟수',
+  'settings.quotaValue': '{remaining} / {limit} 회',
+  'settings.quotaLoading': '불러오는 중…',
+  'settings.quotaUnavailable': '확인할 수 없음',
+  'settings.quotaResetHint': '횟수는 매일 00:00(UTC+8)에 초기화됩니다.',
+  'settings.builtinPrivacy':
+    '공식 채널의 요청은 Promptary 서버를 거쳐 전달되지만 이미지는 보관되지 않습니다. URL로 전달하는 경우 이미지 자체는 서버를 거치지 않습니다.',
+
   'settings.providerHint':
     '이미지 입력을 지원하는 모델이 필요합니다. 본인의 API 키를 사용하며, 데이터는 어떤 제3자 서버도 거치지 않습니다.',
   'settings.baseUrl': '엔드포인트(baseUrl)',
@@ -120,7 +141,7 @@ export const ko: Dict = {
   'settings.sdChineseWarning':
     'Stable Diffusion 계열의 태그는 영어 말뭉치로 학습되어, 중국어 프롬프트는 출력 품질이 눈에 띄게 떨어집니다. 중국어를 쓰시려면 다른 모델을 권장합니다.',
   'settings.promptPreview': '실제 전송되는 프롬프트 보기',
-  'settings.promptPreviewHint': '현재 설정으로 조립되어 실제로 모델에 전송되는 시스템 프롬프트입니다. 출력이 이상하면 여기를 먼저 확인하세요.',
+  'settings.promptPreviewHide': '접기',
   'settings.behavior': '동작',
   'settings.hoverButton': '이미지 호버 버튼',
   'settings.hoverButtonHint':
@@ -218,6 +239,10 @@ export const ko: Dict = {
   'item.untitled': '제목 없는 이미지',
   'batch.noImages': '선택된 이미지가 없습니다',
   'batch.alreadyRunning': '이미 일괄 작업이 실행 중입니다',
+  'batch.quotaExhausted':
+    '오늘의 무료 횟수를 모두 사용했습니다. 내일 초기화되며, 설정에서 자신의 API 키로 바꾸면 횟수 제한이 없습니다.',
+  'batch.quotaLimited':
+    '오늘 남은 무료 횟수는 {remaining}회인데 {count}장을 선택했습니다.\n\n확인을 누르면 앞의 {remaining}장만 처리합니다. 취소를 누르면 시작하지 않으며, 설정에서 자신의 API 키(횟수 제한 없음)로 바꿀 수 있습니다.',
   'error.noApiKey': 'API 키가 설정되지 않았습니다. 설정 페이지에서 입력하세요',
   'error.noBaseUrl': '엔드포인트 또는 모델 이름이 비어 있습니다. 설정 페이지에서 입력하세요',
   'error.connectFailed': '모델 서비스에 연결할 수 없습니다: {message}',
@@ -226,6 +251,8 @@ export const ko: Dict = {
   'error.rateLimit': '요청이 제한되었습니다. 잠시 후 다시 시도하세요',
   'error.httpStatus': '모델 API가 {status}{hint}를 반환했습니다: {detail}',
   'error.emptyResponse': '모델이 아무것도 반환하지 않았습니다. 이미지 입력을 지원하지 않을 수 있습니다',
+  'error.thinkingAteBudget':
+    '모델의 사고 과정이 출력 길이 한도를 모두 사용해 본문이 남지 않았습니다. 추론 모델이 아닌 것으로 바꾸거나 해당 모델의 최대 출력 길이를 늘려 주세요.',
   'error.badJson': '모델이 올바른 JSON을 반환하지 않았습니다. 다시 시도하거나 지시를 더 잘 따르는 모델을 사용하세요',
   'error.noPrompt': '모델이 프롬프트를 생성하지 않았습니다. 다시 시도하세요',
   'error.noImageData': '사용할 수 있는 이미지 데이터를 얻지 못했습니다',
@@ -241,5 +268,6 @@ export const ko: Dict = {
   'model.mj.hint': 'Midjourney V7 / V8.2 / niji — 간결한 묘사 + 끝 파라미터',
   'model.gptImage.hint': 'GPT-Image 2.5 (Flare / Sunburst) — 길고 상세한 묘사에 강함',
   'model.nanoBanana.hint': 'Gemini 이미지 모델 — 묘사형 입력, 텍스트 렌더링 정확',
-  'model.seedream.hint': 'Seedream 5.0 Pro — 중국어 묘사가 가장 자연스러움',  'inpage.tagPlaceholder': '태그 입력 후 Enter',
+  'model.seedream.hint': 'Seedream 5.0 Pro — 중국어 묘사가 가장 자연스러움',
+  'inpage.tagPlaceholder': '태그 입력 후 Enter',
 };

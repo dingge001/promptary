@@ -1,10 +1,7 @@
 import type { Dict } from './zh-CN';
 
 export const en: Dict = {
-  'settings.about': 'About',
   'settings.githubRepo': 'GitHub repository',
-  'settings.githubHint': 'Open source — issues and PRs welcome, especially new image-model profiles.',
-  'settings.reportIssue': 'Report an issue',
   'common.close': 'Close',
   'common.cancel': 'Cancel',
   'common.save': 'Save',
@@ -22,6 +19,11 @@ export const en: Dict = {
   'app.select': 'Select multiple',
   'app.exitSelect': 'Exit selection',
   'app.library': 'Library',
+  'app.quotaLeft': '{count} left',
+  'app.quotaLeftHint':
+    "Today's free allowance. Switch to your own API key in Settings for unlimited use.",
+  'disclosure.body':
+    'On the free built-in channel, your image is relayed through a Promptary server to the model provider. We do not keep your images or prompts — only an anonymous device ID and a daily counter.\n\nPrefer nothing to pass through us? Switch to your own API key in Settings.',
   'app.trash': 'Trash',
   'app.settings': 'Settings',
   'search.placeholder': 'Search title, prompt, tags…',
@@ -38,7 +40,9 @@ export const en: Dict = {
 
   'picker.title': 'Pick images to analyze',
   'picker.empty':
-    'No images found. The page may still be loading, or extensions may not be allowed to run here (such as browser built-in pages). You can also right-click an image directly.',
+    'No usable images on this page. It may still be loading, or every image is smaller than 200px and got filtered out. You can also right-click an image directly.',
+  'picker.noAccess':
+    'Could not read images from this page. Browser built-in pages do not allow extensions to run; try a regular web page. If this is already a regular page, refresh it and try again.',
   'picker.analyzeOne': 'Analyze this one',
   'picker.analyzeN': 'Analyze {count} selected',
 
@@ -90,6 +94,23 @@ export const en: Dict = {
   'analyze.copyPromptText': 'Copy prompt',
 
   'settings.provider': 'Model service',
+
+  'settings.channelBuiltin': 'Provided by Promptary',
+  'settings.channelBuiltinHint':
+    'Works out of the box, no setup. A free daily allowance — switch to your own service whenever you like.',
+  'settings.channelCustom': 'My own service',
+  'settings.channelCustomHint':
+    'Use your own OpenAI-compatible service, with no daily limit.',
+  'settings.currentChannel': 'In use',
+  'settings.vendor': 'Vendor',
+  'settings.quotaRemaining': 'Left today',
+  'settings.quotaValue': '{remaining} of {limit}',
+  'settings.quotaLoading': 'Loading…',
+  'settings.quotaUnavailable': 'Unavailable',
+  'settings.quotaResetHint': 'The allowance resets daily at 00:00 (UTC+8).',
+  'settings.builtinPrivacy':
+    'Requests on the official channel are relayed through a Promptary server, but your images are not retained. When an image is passed by URL, it never passes through our server at all.',
+
   'settings.providerHint':
     'Needs a model that accepts image input. Use your own API key — nothing goes through any third-party server.',
   'settings.baseUrl': 'Base URL',
@@ -120,7 +141,7 @@ export const en: Dict = {
   'settings.sdChineseWarning':
     'Stable Diffusion tags are trained on English text, so Chinese prompts will noticeably reduce output quality. If you really want Chinese, consider a different target model.',
   'settings.promptPreview': 'Preview the system prompt',
-  'settings.promptPreviewHint': 'This is the exact system prompt sent to the model with your current settings. When output looks wrong, check here first.',
+  'settings.promptPreviewHide': 'Hide',
   'settings.behavior': 'Behavior',
   'settings.hoverButton': 'Hover button on images',
   'settings.hoverButtonHint':
@@ -218,6 +239,10 @@ export const en: Dict = {
   'item.untitled': 'Untitled image',
   'batch.noImages': 'No images selected',
   'batch.alreadyRunning': 'A batch job is already running',
+  'batch.quotaExhausted':
+    "Today's free allowance is used up. It resets tomorrow, or switch to your own API key in Settings — that has no daily limit.",
+  'batch.quotaLimited':
+    "Only {remaining} free uses left today, but you picked {count} images.\n\nOK: analyze just the first {remaining}.\nCancel: don't start — you can switch to your own API key in Settings (no daily limit).",
   'error.noApiKey': 'No API key configured — fill it in on the Settings page',
   'error.noBaseUrl': 'Base URL or model name is empty — fill them in on the Settings page',
   'error.connectFailed': 'Could not reach the model service: {message}',
@@ -226,6 +251,8 @@ export const en: Dict = {
   'error.rateLimit': 'Rate limited, please try again later',
   'error.httpStatus': 'Model API returned {status}{hint}: {detail}',
   'error.emptyResponse': 'The model returned nothing — it may not support image input',
+  'error.thinkingAteBudget':
+    "The model's reasoning consumed the whole output limit, leaving nothing for the answer. Switch to a non-reasoning model, or raise that model's max output length.",
   'error.badJson': 'The model did not return valid JSON. Try again or use a more obedient model',
   'error.noPrompt': 'The model produced no prompt content, please try again',
   'error.noImageData': 'No usable image data was obtained',
@@ -241,5 +268,6 @@ export const en: Dict = {
   'model.mj.hint': 'Midjourney V7 / V8.2 / niji — concise description + trailing parameters',
   'model.gptImage.hint': 'GPT-Image 2.5 (Flare / Sunburst) — handles long, detailed descriptions',
   'model.nanoBanana.hint': 'Gemini image model — descriptive input, accurate text rendering',
-  'model.seedream.hint': 'Seedream 5.0 Pro — works best with Chinese descriptions',  'inpage.tagPlaceholder': 'Type a tag and press Enter',
+  'model.seedream.hint': 'Seedream 5.0 Pro — works best with Chinese descriptions',
+  'inpage.tagPlaceholder': 'Type a tag and press Enter',
 };

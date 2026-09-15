@@ -1,5 +1,11 @@
-import { useCallback, useEffect, useState } from 'react';
-import type { AppSettings, PromptLanguage, ProviderConfig } from '@/lib/db/types';
+import { useCallback, useEffect, useState, type Dispatch, type SetStateAction } from 'react';
+import type { AppSettings, PromptLanguage, ProviderConfig, ProviderMode } from '@/lib/db/types';
+import {
+  BUILTIN_MODEL,
+  BUILTIN_VENDOR,
+  fetchQuota,
+  type QuotaInfo,
+} from '@/lib/providers/builtin';
 import { testConnection } from '@/lib/providers/openai';
 import { listCategories } from '@/lib/db/repo';
 import { saveSettings } from '@/lib/settings';
@@ -98,112 +104,46 @@ export default function SettingsPanel({ settings, onChanged }: Props) {
     }
   };
 
+  const switchMode = async (mode: ProviderMode) => {
+    await saveSettings({ providerMode: mode });
+    onChanged();
+  };
+
   return (
     <div className="flex-1 overflow-y-auto px-3 py-3">
       <section className="mb-5">
         <h2 className="mb-2 text-xs font-semibold">{t('settings.provider')}</h2>
-        <p className="mb-2 text-[10px] leading-relaxed text-neutral-400">
-          {t('settings.providerHint')}
-        </p>
 
-        <div className="mb-3 flex flex-wrap gap-1.5">
-          {PRESETS.map((p) => (
-            <Button
-              key={p.name}
-              size="sm"
-              onClick={() => commit({ baseUrl: p.baseUrl, model: p.model })}
-            >
-              {p.name}
-            </Button>
-          ))}
+        {/* 渠道二选一。默认落在官方渠道:新用户不必先去注册一个模型服务 */}
+        <div className="mb-3 space-y-1">
+          <ChannelOption
+            active={settings.providerMode === 'builtin'}
+            title={t('settings.channelBuiltin')}
+            hint={t('settings.channelBuiltinHint')}
+            onSelect={() => void switchMode('builtin')}
+          />
+          <ChannelOption
+            active={settings.providerMode === 'custom'}
+            title={t('settings.channelCustom')}
+            hint={t('settings.channelCustomHint')}
+            onSelect={() => void switchMode('custom')}
+          />
         </div>
 
-        <label className={labelCls}>{t('settings.baseUrl')}</label>
-        <Input
-          value={draft.baseUrl}
-          onChange={(e) => setDraft({ ...draft, baseUrl: e.target.value })}
-          onBlur={() => commit({ baseUrl: draft.baseUrl })}
-          placeholder="https://api.deepseek.com/v1"
-          className="mb-2"
-        />
-
-        <label className={labelCls}>API Key</label>
-        <Input
-          type={showKey ? 'text' : 'password'}
-          value={draft.apiKey}
-          onChange={(e) => setDraft({ ...draft, apiKey: e.target.value })}
-          onBlur={() => commit({ apiKey: draft.apiKey })}
-          placeholder="sk-..."
-          className="mb-2"
-          suffix={
-            <>
-              <Button
-                size="xs"
-                square
-                variant="ghost"
-                title={showKey ? t('settings.hideKey') : t('settings.showKey')}
-                icon={showKey ? <IconEyeOff className="h-3 w-3" /> : <IconEye className="h-3 w-3" />}
-                onClick={() => setShowKey((v) => !v)}
-              />
-              <Button
-                size="xs"
-                square
-                variant="ghost"
-                title={t('settings.copyKey')}
-                icon={<IconCopy className="h-3 w-3" />}
-                onClick={async () => {
-                  await navigator.clipboard.writeText(draft.apiKey);
-                  setTestMsg({ ok: true, text: t('settings.keyCopied') });
-                }}
-              />
-            </>
-          }
-        />
-
-        <label className={labelCls}>{t('settings.model')}</label>
-        <Input
-          value={draft.model}
-          onChange={(e) => setDraft({ ...draft, model: e.target.value })}
-          onBlur={() => commit({ model: draft.model })}
-          placeholder="deepseek-v4-flash-vision-exp"
-          className="mb-2"
-        />
-
-        <label className={labelCls}>{t('settings.transfer')}</label>
-        <Select
-          value={draft.imageTransfer}
-          onChange={(v) => commit({ imageTransfer: v as ProviderConfig['imageTransfer'] })}
-          className="mb-1 w-full"
-          options={[
-            { value: 'auto', label: t('settings.transferAuto') },
-            { value: 'url', label: t('settings.transferUrl') },
-            { value: 'base64', label: t('settings.transferBase64') },
-          ]}
-        />
-        <p className="mb-3 text-[10px] leading-relaxed text-neutral-400">
-          {t('settings.transferHint')}
-        </p>
-
-        <Button
-          variant="primary"
-          onClick={runTest}
-          disabled={testing}
-          className="h-8 w-full"
-          icon={<IconBolt />}
-        >
-          {testing ? t('settings.testing') : t('settings.test')}
-        </Button>
-
-        {testMsg && (
-          <div
-            className={`mt-2 rounded-md p-2 text-[10px] leading-relaxed ${
-              testMsg.ok
-                ? 'bg-green-50 text-green-700 dark:bg-green-950/40 dark:text-green-400'
-                : 'bg-red-50 text-red-700 dark:bg-red-950/40 dark:text-red-400'
-            }`}
-          >
-            {testMsg.text}
-          </div>
+        {settings.providerMode === 'builtin' ? (
+          <BuiltinChannel />
+        ) : (
+          <CustomChannel
+            draft={draft}
+            setDraft={setDraft}
+            commit={commit}
+            testing={testing}
+            testMsg={testMsg}
+            runTest={runTest}
+            showKey={showKey}
+            setShowKey={setShowKey}
+            setTestMsg={setTestMsg}
+          />
         )}
       </section>
 
@@ -269,25 +209,19 @@ export default function SettingsPanel({ settings, onChanged }: Props) {
             {t('settings.sdChineseWarning')}
           </p>
         )}
-      </section>
 
-      <section className="mb-5">
-        <h2 className="mb-2 text-xs font-semibold">{t('settings.promptPreview')}</h2>
-        <p className="mb-2 text-[10px] leading-relaxed text-neutral-400">
-          {t('settings.promptPreviewHint')}
-        </p>
-        <Button
-          size="sm"
-          icon={<IconEye />}
-          onClick={() => {
-            setPreviewOpen(true);
-            void refreshPreview();
-          }}
+        {/* 调试入口。这是「出问题时才需要」的功能,配一整个标题加说明,
+            对多数用户只是噪音 —— 折成一行文字链接,并挪到目标模型下面
+            (它展示的正是这个模型档案拼出来的 system prompt) */}
+        <button
+          type="button"
+          onClick={() => setPreviewOpen((v) => !v)}
+          className="mt-3 text-[10px] text-accent hover:underline"
         >
-          {t('settings.promptPreview')}
-        </Button>
+          {previewOpen ? t('settings.promptPreviewHide') : t('settings.promptPreview')}
+        </button>
 
-        {promptPreview && (
+        {previewOpen && promptPreview && (
           <div className="mt-2">
             <pre className="max-h-72 overflow-auto rounded-lg bg-neutral-100 p-2 text-[10px] leading-relaxed whitespace-pre-wrap select-all dark:bg-neutral-900">
               {promptPreview}
@@ -379,36 +313,256 @@ export default function SettingsPanel({ settings, onChanged }: Props) {
         </div>
       </section>
 
-      <section className="mb-5">
-        <h2 className="mb-2 text-xs font-semibold">{t('settings.about')}</h2>
-        <a
-          href="https://github.com/dingge001/promptary"
-          target="_blank"
-          rel="noreferrer"
-          className="flex items-center gap-2 rounded-lg border border-line p-2 text-[11px] text-ink-2 transition-colors hover:border-accent hover:text-accent"
-        >
-          <IconGithub className="h-4 w-4 shrink-0" />
-          <span className="font-medium">{t('settings.githubRepo')}</span>
-          <span className="ml-auto text-ink-3">↗</span>
-        </a>
-        <p className="mt-1.5 text-[10px] leading-relaxed text-neutral-400">
-          {t('settings.githubHint')}
-        </p>
-        <a
-          href="https://github.com/dingge001/promptary/issues"
-          target="_blank"
-          rel="noreferrer"
-          className="mt-1.5 inline-block text-[10px] text-accent hover:underline"
-        >
-          {t('settings.reportIssue')} ↗
-        </a>
-      </section>
-
       <DataSection />
 
-      <p className="text-[10px] leading-relaxed text-neutral-400">
-        {t('settings.apiKeyNote')}
+      {settings.providerMode === 'custom' && (
+        <p className="text-[10px] leading-relaxed text-neutral-400">
+          {t('settings.apiKeyNote')}
+        </p>
+      )}
+
+      {/* 沉到最下面,只留一个入口 —— 项目说明和问题反馈都能从仓库页进去,
+          没必要在设置页里各占一行 */}
+      <a
+        href="https://github.com/dingge001/promptary"
+        target="_blank"
+        rel="noreferrer"
+        className="mt-5 flex items-center gap-2 rounded-lg border border-line p-2 text-[11px] text-ink-2 transition-colors hover:border-accent hover:text-accent"
+      >
+        <IconGithub className="h-4 w-4 shrink-0" />
+        <span className="font-medium">{t('settings.githubRepo')}</span>
+        <span className="ml-auto text-ink-3">↗</span>
+      </a>
+    </div>
+  );
+}
+
+/** 渠道单选项。样式对齐「目标模型」那组卡片,让两处选择看起来是一套东西 */
+function ChannelOption({
+  active,
+  title,
+  hint,
+  onSelect,
+}: {
+  active: boolean;
+  title: string;
+  hint: string;
+  onSelect: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onSelect}
+      className={`w-full rounded-lg border p-2 text-left transition-colors ${
+        active
+          ? 'border-accent bg-accent-soft dark:bg-blue-950/30'
+          : 'border-neutral-200 hover:border-neutral-300 dark:border-neutral-800 dark:hover:border-neutral-700'
+      }`}
+    >
+      <div className="flex items-center gap-1.5">
+        <span className="text-[11px] font-medium">{title}</span>
+        {active && (
+          <span className="ml-auto text-[9px] text-accent">{t('settings.currentChannel')}</span>
+        )}
+      </div>
+      <div className="mt-0.5 text-[10px] leading-relaxed text-neutral-400">{hint}</div>
+    </button>
+  );
+}
+
+/**
+ * 官方渠道。
+ *
+ * 服务商和模型是只读的 —— 用户选的就是「用官方提供的」,让他改这两个字段
+ * 没有意义,只会让请求对不上服务端的配置。想换服务就切到「自己配置」。
+ */
+function BuiltinChannel() {
+  const [quota, setQuota] = useState<QuotaInfo>();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+
+    void fetchQuota().then((q) => {
+      // 组件可能已经卸载,这时 setState 是无意义的
+      if (cancelled) return;
+      setQuota(q);
+      setLoading(false);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const remaining = quota ? Math.max(0, quota.limit - quota.used) : undefined;
+
+  return (
+    <div className="rounded-lg border border-line p-2">
+      <ReadOnlyRow label={t('settings.vendor')} value={BUILTIN_VENDOR} />
+      <ReadOnlyRow label={t('settings.model')} value={BUILTIN_MODEL} />
+
+      <div className="mt-2 flex items-center justify-between border-t border-line pt-2">
+        <span className="text-[10px] text-neutral-400">{t('settings.quotaRemaining')}</span>
+        <span className="text-[11px] font-medium text-ink">
+          {loading
+            ? t('settings.quotaLoading')
+            : remaining === undefined || !quota
+              ? t('settings.quotaUnavailable')
+              : t('settings.quotaValue', { remaining, limit: quota.limit })}
+        </span>
+      </div>
+
+      <p className="mt-1.5 text-[10px] leading-relaxed text-neutral-400">
+        {t('settings.quotaResetHint')}
+      </p>
+      {/* 走官方渠道意味着请求要过我们的服务器,这一点必须让用户看到 */}
+      <p className="mt-1.5 text-[10px] leading-relaxed text-neutral-400">
+        {t('settings.builtinPrivacy')}
       </p>
     </div>
+  );
+}
+
+function ReadOnlyRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-center justify-between py-0.5">
+      <span className="text-[10px] text-neutral-400">{label}</span>
+      <span className="text-[11px] text-ink-2">{value}</span>
+    </div>
+  );
+}
+
+interface CustomChannelProps {
+  draft: ProviderConfig;
+  setDraft: (config: ProviderConfig) => void;
+  commit: (patch: Partial<ProviderConfig>) => Promise<void>;
+  testing: boolean;
+  testMsg?: { ok: boolean; text: string };
+  runTest: () => Promise<void>;
+  showKey: boolean;
+  setShowKey: Dispatch<SetStateAction<boolean>>;
+  setTestMsg: (message?: { ok: boolean; text: string }) => void;
+}
+
+/** 用户自带的模型服务。这一块和以前完全一样,只是现在被折进了「自己配置」下面 */
+function CustomChannel({
+  draft,
+  setDraft,
+  commit,
+  testing,
+  testMsg,
+  runTest,
+  showKey,
+  setShowKey,
+  setTestMsg,
+}: CustomChannelProps) {
+  return (
+    <>
+      <p className="mb-2 text-[10px] leading-relaxed text-neutral-400">
+        {t('settings.providerHint')}
+      </p>
+
+      <div className="mb-3 flex flex-wrap gap-1.5">
+        {PRESETS.map((p) => (
+          <Button
+            key={p.name}
+            size="sm"
+            onClick={() => commit({ baseUrl: p.baseUrl, model: p.model })}
+          >
+            {p.name}
+          </Button>
+        ))}
+      </div>
+
+      <label className={labelCls}>{t('settings.baseUrl')}</label>
+      <Input
+        value={draft.baseUrl}
+        onChange={(e) => setDraft({ ...draft, baseUrl: e.target.value })}
+        onBlur={() => commit({ baseUrl: draft.baseUrl })}
+        placeholder="https://api.deepseek.com/v1"
+        className="mb-2"
+      />
+
+      <label className={labelCls}>API Key</label>
+      <Input
+        type={showKey ? 'text' : 'password'}
+        value={draft.apiKey}
+        onChange={(e) => setDraft({ ...draft, apiKey: e.target.value })}
+        onBlur={() => commit({ apiKey: draft.apiKey })}
+        placeholder="sk-..."
+        className="mb-2"
+        suffix={
+          <>
+            <Button
+              size="xs"
+              square
+              variant="ghost"
+              title={showKey ? t('settings.hideKey') : t('settings.showKey')}
+              icon={showKey ? <IconEyeOff className="h-3 w-3" /> : <IconEye className="h-3 w-3" />}
+              onClick={() => setShowKey((v) => !v)}
+            />
+            <Button
+              size="xs"
+              square
+              variant="ghost"
+              title={t('settings.copyKey')}
+              icon={<IconCopy className="h-3 w-3" />}
+              onClick={async () => {
+                await navigator.clipboard.writeText(draft.apiKey);
+                setTestMsg({ ok: true, text: t('settings.keyCopied') });
+              }}
+            />
+          </>
+        }
+      />
+
+      <label className={labelCls}>{t('settings.model')}</label>
+      <Input
+        value={draft.model}
+        onChange={(e) => setDraft({ ...draft, model: e.target.value })}
+        onBlur={() => commit({ model: draft.model })}
+        placeholder="deepseek-flash"
+        className="mb-2"
+      />
+
+      <label className={labelCls}>{t('settings.transfer')}</label>
+      <Select
+        value={draft.imageTransfer}
+        onChange={(v) => commit({ imageTransfer: v as ProviderConfig['imageTransfer'] })}
+        className="mb-1 w-full"
+        options={[
+          { value: 'auto', label: t('settings.transferAuto') },
+          { value: 'url', label: t('settings.transferUrl') },
+          { value: 'base64', label: t('settings.transferBase64') },
+        ]}
+      />
+      <p className="mb-3 text-[10px] leading-relaxed text-neutral-400">
+        {t('settings.transferHint')}
+      </p>
+
+      <Button
+        variant="primary"
+        onClick={runTest}
+        disabled={testing}
+        className="h-8 w-full"
+        icon={<IconBolt />}
+      >
+        {testing ? t('settings.testing') : t('settings.test')}
+      </Button>
+
+      {testMsg && (
+        <div
+          className={`mt-2 rounded-md p-2 text-[10px] leading-relaxed ${
+            testMsg.ok
+              ? 'bg-green-50 text-green-700 dark:bg-green-950/40 dark:text-green-400'
+              : 'bg-red-50 text-red-700 dark:bg-red-950/40 dark:text-red-400'
+          }`}
+        >
+          {testMsg.text}
+        </div>
+      )}
+    </>
   );
 }

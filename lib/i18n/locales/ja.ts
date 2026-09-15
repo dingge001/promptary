@@ -1,10 +1,7 @@
 import type { Dict } from './zh-CN';
 
 export const ja: Dict = {
-  'settings.about': 'このアプリについて',
   'settings.githubRepo': 'GitHub リポジトリ',
-  'settings.githubHint': 'オープンソースです。Issue や PR を歓迎します(特に新しい画像モデルの対応)。',
-  'settings.reportIssue': '問題を報告',
   'common.close': '閉じる',
   'common.cancel': 'キャンセル',
   'common.save': '保存',
@@ -22,6 +19,11 @@ export const ja: Dict = {
   'app.select': '複数選択',
   'app.exitSelect': '選択を終了',
   'app.library': 'ライブラリ',
+  'app.quotaLeft': '残り {count} 回',
+  'app.quotaLeftHint':
+    '本日の無料回数です。設定で自分の API キーに切り替えると回数制限がなくなります。',
+  'disclosure.body':
+    '公式の無料枠を使う場合、画像は Promptary のサーバーを経由してモデル提供元へ転送されます。画像とプロンプトは保存せず、匿名の端末識別子と 1 日の使用回数のみ記録します。\n\n私たちを経由させたくない場合は、設定で自分の API キーに切り替えられます。',
   'app.trash': 'ゴミ箱',
   'app.settings': '設定',
   'search.placeholder': 'タイトル・プロンプト・タグを検索…',
@@ -38,7 +40,9 @@ export const ja: Dict = {
 
   'picker.title': 'プロンプト化する画像を選択',
   'picker.empty':
-    '画像が見つかりませんでした。ページがまだ読み込み中の可能性があります。また、ブラウザの内部ページなど拡張機能を実行できないページかもしれません。画像を直接右クリックしても実行できます。',
+    'このページに使える画像が見つかりませんでした。まだ読み込み中か、すべての画像が 200px 未満で除外された可能性があります。画像を直接右クリックしても実行できます。',
+  'picker.noAccess':
+    'このページの画像を読み取れませんでした。ブラウザの内部ページでは拡張機能を実行できません。通常の Web ページでお試しください。通常のページであれば、再読み込みしてからお試しください。',
   'picker.analyzeOne': 'この画像を解析',
   'picker.analyzeN': '選択した {count} 枚を解析',
 
@@ -90,6 +94,23 @@ export const ja: Dict = {
   'analyze.copyPromptText': 'プロンプトをコピー',
 
   'settings.provider': 'モデルサービス',
+
+  'settings.channelBuiltin': '公式提供',
+  'settings.channelBuiltinHint':
+    '設定なしですぐ使えます。1 日あたりの無料回数があり、足りなくなったら自分のサービスに切り替えられます。',
+  'settings.channelCustom': '自分で設定',
+  'settings.channelCustomHint':
+    '自分の OpenAI 互換サービスを設定します。回数制限はありません。',
+  'settings.currentChannel': '使用中',
+  'settings.vendor': '提供元',
+  'settings.quotaRemaining': '本日の残り',
+  'settings.quotaValue': '{remaining} / {limit} 回',
+  'settings.quotaLoading': '読み込み中…',
+  'settings.quotaUnavailable': '取得できません',
+  'settings.quotaResetHint': '回数は毎日 00:00(UTC+8)にリセットされます。',
+  'settings.builtinPrivacy':
+    '公式チャンネルのリクエストは Promptary のサーバーを経由しますが、画像は保存されません。URL で渡す場合、画像自体はサーバーを通りません。',
+
   'settings.providerHint':
     '画像入力に対応したモデルが必要です。ご自身の API キーを使用し、データが第三者サーバーを経由することはありません。',
   'settings.baseUrl': 'エンドポイント(baseUrl)',
@@ -120,7 +141,7 @@ export const ja: Dict = {
   'settings.sdChineseWarning':
     'Stable Diffusion 系のタグは英語コーパスで学習されているため、中国語のプロンプトでは出力品質が明らかに低下します。中国語を使いたい場合は別のモデルをおすすめします。',
   'settings.promptPreview': '実際に送信されるプロンプトを確認',
-  'settings.promptPreviewHint': '現在の設定で組み立てられ、実際にモデルへ送られるシステムプロンプトです。出力がおかしいときはまずここを確認してください。',
+  'settings.promptPreviewHide': '閉じる',
   'settings.behavior': '動作',
   'settings.hoverButton': '画像ホバーボタン',
   'settings.hoverButtonHint':
@@ -218,6 +239,10 @@ export const ja: Dict = {
   'item.untitled': '無題の画像',
   'batch.noImages': '画像が選択されていません',
   'batch.alreadyRunning': '一括処理がすでに実行中です',
+  'batch.quotaExhausted':
+    '本日の無料回数を使い切りました。明日リセットされます。設定で自分の API キーに切り替えれば回数制限はありません。',
+  'batch.quotaLimited':
+    '本日の無料回数は残り {remaining} 回ですが、{count} 枚選択されています。\n\n「OK」で最初の {remaining} 枚のみ実行します。「キャンセル」で中止し、設定で自分の API キー(回数制限なし)に切り替えられます。',
   'error.noApiKey': 'API キーが未設定です。設定ページで入力してください',
   'error.noBaseUrl': 'エンドポイントまたはモデル名が空です。設定ページで入力してください',
   'error.connectFailed': 'モデルサービスに接続できません:{message}',
@@ -226,6 +251,8 @@ export const ja: Dict = {
   'error.rateLimit': 'レート制限に達しました。しばらくしてからお試しください',
   'error.httpStatus': 'モデル API が {status}{hint} を返しました:{detail}',
   'error.emptyResponse': 'モデルが何も返しませんでした。画像入力に対応していない可能性があります',
+  'error.thinkingAteBudget':
+    'モデルの思考が出力長の上限を使い切り、本文が残りませんでした。推論モデル以外に切り替えるか、そのモデルの最大出力長を増やしてください。',
   'error.badJson': 'モデルが有効な JSON を返しませんでした。再試行するか、より指示に従うモデルをお使いください',
   'error.noPrompt': 'モデルがプロンプトを生成しませんでした。再試行してください',
   'error.noImageData': '利用できる画像データを取得できませんでした',
@@ -241,5 +268,6 @@ export const ja: Dict = {
   'model.mj.hint': 'Midjourney V7 / V8.2 / niji — 簡潔な記述 + 末尾パラメータ',
   'model.gptImage.hint': 'GPT-Image 2.5(Flare / Sunburst)— 長く詳細な記述に対応',
   'model.nanoBanana.hint': 'Gemini 画像モデル — 記述的な入力、文字描画が正確',
-  'model.seedream.hint': 'Seedream 5.0 Pro — 中国語の記述が最適',  'inpage.tagPlaceholder': 'タグを入力して Enter',
+  'model.seedream.hint': 'Seedream 5.0 Pro — 中国語の記述が最適',
+  'inpage.tagPlaceholder': 'タグを入力して Enter',
 };

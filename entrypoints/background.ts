@@ -12,6 +12,7 @@ import {
   type PendingTask,
 } from '@/lib/messages';
 import { getSettings, isProviderReady, SETTINGS_STORAGE_KEY } from '@/lib/settings';
+import { sendToTab } from '@/lib/tabs';
 import { analyzeImage, ensureLocalImage } from '@/lib/vision/analyze';
 import { siteOf } from '@/lib/vision/image';
 
@@ -129,26 +130,14 @@ export default defineBackground(() => {
  * 走页面内面板而不是侧边栏,是为了和悬停按钮保持一致。
  * 侧边栏那条路根本走不通:sidePanel.open() 要求用户手势,
  * 而内容脚本转发过来的调用已经没有手势了。
+ *
+ * 页面可能比扩展先加载(扩展刚装或刚更新时打开的老页面),sendToTab 会补注入兜底。
  */
 async function analyzeInPage(tabId: number | undefined, imageUrl: string): Promise<void> {
   if (tabId == null) return;
 
-  const message = { type: 'analyzeInPage' as const, imageUrl };
-
   try {
-    await chrome.tabs.sendMessage(tabId, message);
-    return;
-  } catch {
-    // 内容脚本还没注入(扩展刚装或刚更新时打开的老页面),动态补一次再重试
-  }
-
-  try {
-    // 这个路径由 WXT 按入口文件名生成,改 entrypoints/content.ts 的名字时要同步改这里
-    await chrome.scripting.executeScript({
-      target: { tabId },
-      files: ['content-scripts/content.js'],
-    });
-    await chrome.tabs.sendMessage(tabId, message);
+    await sendToTab(tabId, { type: 'analyzeInPage', imageUrl });
   } catch (err) {
     console.warn('[promptary] 无法在页面内反推,请刷新页面后重试', err);
   }

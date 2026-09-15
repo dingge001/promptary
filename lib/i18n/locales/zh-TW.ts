@@ -2,10 +2,7 @@ import type { Dict } from './zh-CN';
 
 /** 繁體中文(台灣用語) */
 export const zhTW: Dict = {
-  'settings.about': '關於',
   'settings.githubRepo': 'GitHub 儲存庫',
-  'settings.githubHint': '開源專案,歡迎提 Issue 或 PR —— 尤其歡迎新增生圖模型的支援。',
-  'settings.reportIssue': '回報問題',
   'common.close': '關閉',
   'common.cancel': '取消',
   'common.save': '儲存',
@@ -23,6 +20,10 @@ export const zhTW: Dict = {
   'app.select': '批次選取',
   'app.exitSelect': '結束批次選取',
   'app.library': '提示詞管理',
+  'app.quotaLeft': '剩 {count} 次',
+  'app.quotaLeftHint': '今日免費額度。在設定裡換成自己的 API Key 就不受次數限制。',
+  'disclosure.body':
+    '使用官方免費額度時,圖片會經 Promptary 伺服器轉發給模型服務商。我們不保留圖片和提示詞,只記錄一個匿名裝置識別碼與每日使用次數。\n\n不希望任何內容經過我們?可以在設定裡改用你自己的 API Key。',
   'app.trash': '回收筒',
   'app.settings': '設定',
   'search.placeholder': '搜尋標題、提示詞、標籤…',
@@ -38,7 +39,9 @@ export const zhTW: Dict = {
 
   'picker.title': '選擇要反推的圖片',
   'picker.empty':
-    '沒有取得圖片。可能是頁面還沒載入完,或這個頁面不允許擴充功能注入(例如瀏覽器內建頁面)。也可以直接在圖片上按右鍵反推。',
+    '這一頁沒有找到可用的圖片。可能還在載入,或是圖片都小於 200px 被過濾掉了。也可以直接在圖片上按右鍵反推。',
+  'picker.noAccess':
+    '讀不到這個頁面的圖片。瀏覽器內建頁面不允許擴充功能讀取,請換一個一般網頁;如果本來就是一般網頁,重新整理一次再試。',
   'picker.analyzeOne': '反推這張',
   'picker.analyzeN': '反推選取的 {count} 張',
 
@@ -90,6 +93,22 @@ export const zhTW: Dict = {
   'analyze.copyPromptText': '複製提示詞',
 
   'settings.provider': '模型服務',
+
+  'settings.channelBuiltin': '官方提供',
+  'settings.channelBuiltinHint':
+    '開箱即用,不用設定。每天有免費次數,用完可以換成自己的服務。',
+  'settings.channelCustom': '自行設定',
+  'settings.channelCustomHint': '填自己的 OpenAI 相容服務,不受次數限制。',
+  'settings.currentChannel': '使用中',
+  'settings.vendor': '服務商',
+  'settings.quotaRemaining': '今日剩餘',
+  'settings.quotaValue': '{remaining} / {limit} 次',
+  'settings.quotaLoading': '讀取中…',
+  'settings.quotaUnavailable': '暫時讀不到',
+  'settings.quotaResetHint': '額度每天 00:00(UTC+8)重置。',
+  'settings.builtinPrivacy':
+    '官方渠道的請求會經 Promptary 伺服器轉發,但不會留存你的圖片。圖片以網址直傳時,圖片本身不經過伺服器。',
+
   'settings.providerHint':
     '需要支援圖片輸入的模型。填自己的 API Key,資料不會經過任何第三方伺服器。',
   'settings.baseUrl': '介面位址(baseUrl)',
@@ -120,7 +139,7 @@ export const zhTW: Dict = {
   'settings.sdChineseWarning':
     'Stable Diffusion 系的標籤是用英文語料訓練的,中文提示詞的輸出品質會明顯下降。真的要用中文,建議換個目標模型。',
   'settings.promptPreview': '檢視實際送出的提示詞',
-  'settings.promptPreviewHint': '這是依目前設定組裝、真正送給模型的系統提示詞。模型表現不對時,先看這裡。',
+  'settings.promptPreviewHide': '收合',
   'settings.behavior': '行為',
   'settings.hoverButton': '圖片懸停快捷按鈕',
   'settings.hoverButtonHint':
@@ -216,6 +235,10 @@ export const zhTW: Dict = {
   'item.untitled': '未命名圖片',
   'batch.noImages': '沒有選取任何圖片',
   'batch.alreadyRunning': '已經有一個批次工作在進行中',
+  'batch.quotaExhausted':
+    '今天的免費額度已經用完。明天會重置,也可以在設定裡換成自己的 API Key,那樣不受次數限制。',
+  'batch.quotaLimited':
+    '今天還剩 {remaining} 次免費額度,但你選了 {count} 張。\n\n按「確定」只反推前 {remaining} 張;按「取消」先不開始,可以到設定裡換成自己的 API Key(不受次數限制)。',
   'error.noApiKey': '尚未設定 API Key,請先到設定頁填寫',
   'error.noBaseUrl': '模型服務位址或模型名稱為空,請先到設定頁填寫',
   'error.connectFailed': '無法連線到模型服務:{message}',
@@ -224,6 +247,8 @@ export const zhTW: Dict = {
   'error.rateLimit': '觸發限流,請稍後再試',
   'error.httpStatus': '模型介面回應 {status}{hint}:{detail}',
   'error.emptyResponse': '模型沒有回傳內容,可能是模型不支援圖片輸入',
+  'error.thinkingAteBudget':
+    '模型的思考過程用光了輸出長度上限,沒留空間給正文。請換一個非推理模型,或調高該模型的最大輸出長度。',
   'error.badJson': '模型沒有回傳合法的 JSON,請重試或換一個更聽話的模型',
   'error.noPrompt': '模型沒有產出提示詞內容,請重試',
   'error.noImageData': '沒有取得可用的圖片資料',
@@ -239,5 +264,6 @@ export const zhTW: Dict = {
   'model.mj.hint': 'Midjourney V7 / V8.2 / niji —— 簡潔描述 + 尾端參數',
   'model.gptImage.hint': 'GPT-Image 2.5(Flare / Sunburst)—— 能吃很長的詳細描述',
   'model.nanoBanana.hint': 'Gemini 圖像模型 —— 描述式輸入,文字渲染很準',
-  'model.seedream.hint': 'Seedream 5.0 Pro / 即夢 —— 中文描述效果最好',  'inpage.tagPlaceholder': '輸入標籤後按 Enter 新增',
+  'model.seedream.hint': 'Seedream 5.0 Pro / 即夢 —— 中文描述效果最好',
+  'inpage.tagPlaceholder': '輸入標籤後按 Enter 新增',
 };

@@ -1,7 +1,14 @@
 import { debugLog } from '@/lib/inpage/debug';
 import { createHoverButton } from '@/lib/inpage/hover-button';
 import { createResultPanel } from '@/lib/inpage/result-panel';
-import type { AnalyzedPayload, BackgroundResponse, PageImage, TabCommand } from '@/lib/messages';
+import {
+  IMAGE_WATCH_PORT,
+  type AnalyzedPayload,
+  type BackgroundResponse,
+  type ImagesUpdatedMessage,
+  type PageImage,
+  type TabCommand,
+} from '@/lib/messages';
 import { detectLocale, setLocale, t } from '@/lib/i18n';
 import { SETTINGS_STORAGE_KEY } from '@/lib/settings';
 import { formatDimensions } from '@/lib/vision/image';
@@ -69,6 +76,126 @@ function listenToExtension(): void {
       return false;
     },
   );
+
+  // 选图面板通过长连接盯住本页图片:连上就开盯,断开就收工
+  chrome.runtime.onConnect.addListener((port) => {
+    if (port.name !== IMAGE_WATCH_PORT) return;
+
+    watchPorts.add(port);
+    startWatchingImages();
+
+    // 新面板连上时先给它一份当前快照,不必等第一次 DOM 变化才有内容。
+    // 多个侧边栏同时开着时会重复发一轮,但合并在侧边栏侧是幂等的,不值得为它加分支
+    pushImages(true);
+
+    port.onDisconnect.addListener(() => {
+      watchPorts.delete(port);
+      if (watchPorts.size === 0) stopWatchingImages();
+    });
+  });
+}
+
+// ============================ 图片变化监听 ============================
+
+/**
+ * 选图面板打开期间,持续把页面图片清单推给侧边栏。
+ *
+ * 为什么不反过来让侧边栏定时来拉:轮询要么慢(用户滚完还得等下一拍),
+ * 要么勤(每轮都要遍历全部 img 并读 getBoundingClientRect,那是强制重排,
+ * 几百张图的页面上每秒跑一次很贵)。改成页面侧盯住变化、有变化才推,两边都省。
+ */
+
+/** 变化合并窗口。滚动和懒加载是连成串触发的,攒一下再算,免得中间态白跑好几轮 */
+const WATCH_DEBOUNCE_MS = 300;
+
+/** 正在盯这块页面的面板。多窗口可以同时开多个侧边栏,所以是个集合 */
+const watchPorts = new Set<chrome.runtime.Port>();
+
+interface Watcher {
+  observer: MutationObserver;
+  timer: ReturnType<typeof setTimeout> | undefined;
+  /** 上轮推送的内容。null 表示还没推过 —— 别用空字符串,那会把「空页面」误判成「没变化」 */
+  fingerprint: string | null;
+  onLoad: () => void;
+  onScroll: () => void;
+}
+
+let watcher: Watcher | null = null;
+
+/** 内容指纹。只需能分辨两轮采集是否一致,不必可逆 */
+function fingerprintOf(images: PageImage[]): string {
+  return images.map((img) => `${img.src} ${img.width}x${img.height}`).join('\n');
+}
+
+/**
+ * 推一次当前快照。
+ *
+ * force 用于「有面板刚连上」:那时指纹没变,但它还没拿到过任何数据。
+ */
+function pushImages(force = false): void {
+  if (!watcher || watchPorts.size === 0) return;
+
+  const images = collectImages();
+  const fingerprint = fingerprintOf(images);
+  if (!force && fingerprint === watcher.fingerprint) return;
+  watcher.fingerprint = fingerprint;
+
+  for (const port of watchPorts) {
+    try {
+      port.postMessage({ images } satisfies ImagesUpdatedMessage);
+    } catch {
+      // 端口正在断开,onDisconnect 马上会来收尾,这里不必管
+    }
+  }
+}
+
+function schedulePush(): void {
+  if (!watcher) return;
+  clearTimeout(watcher.timer);
+  watcher.timer = setTimeout(() => pushImages(), WATCH_DEBOUNCE_MS);
+}
+
+function startWatchingImages(): void {
+  if (watcher) return; // 已经在盯了,再来一个面板不必重复挂监听
+
+  const observer = new MutationObserver(schedulePush);
+  observer.observe(document.documentElement, {
+    childList: true,
+    subtree: true,
+    // 只盯能改变「图片地址」的属性。刻意不含 class / style ——
+    // 动画和 hover 会让它们疯狂变化,却完全不影响采集结果
+    attributes: true,
+    attributeFilter: [
+      'src',
+      'srcset',
+      'data-src',
+      'data-original',
+      'data-lazy-src',
+      'data-actualsrc',
+    ],
+  });
+
+  // 懒加载有一半是「src 没动、浏览器自己把图拉下来了」,属性上留不下痕迹,
+  // 但 load 事件会响。capture 才收得到 img 的 load —— 它不冒泡
+  const onLoad = () => schedulePush();
+  document.addEventListener('load', onLoad, true);
+
+  // 触底加载更多。capture 是为了收到站点内部滚动容器的滚动:
+  // 很多图站整页高度是固定的,真正在滚的是里面那个 div
+  const onScroll = () => schedulePush();
+  window.addEventListener('scroll', onScroll, { passive: true, capture: true });
+
+  watcher = { observer, timer: undefined, fingerprint: null, onLoad, onScroll };
+}
+
+function stopWatchingImages(): void {
+  if (!watcher) return;
+
+  watcher.observer.disconnect();
+  clearTimeout(watcher.timer);
+  document.removeEventListener('load', watcher.onLoad, true);
+  window.removeEventListener('scroll', watcher.onScroll, true);
+  watcher = null;
 }
 
 // ============================ 页面内 UI ============================
@@ -183,6 +310,15 @@ function setupInPageUI(): void {
 /** 小于这个尺寸的一律当图标/装饰图,不当候选 */
 const MIN_EDGE = 200;
 
+/**
+ * 候选数量上限。
+ *
+ * 留到 300 是给「滚动加载」留的余量:新图只会追加到列表末尾,上限若卡在
+ * 刚好看完一屏的数量,后面滚出来的就再也挤不进来,表现成「滚了也没反应」。
+ * 列表里的缩略图是懒加载的,放宽上限不会拖慢打开速度。
+ */
+const MAX_CANDIDATES = 300;
+
 function collectImages(): PageImage[] {
   const seen = new Set<string>();
 
@@ -215,7 +351,7 @@ function collectImages(): PageImage[] {
     })
     // 按面积从大到小,用户想要的多半是主图
     .sort((a, b) => b.width * b.height - a.width * a.height)
-    .slice(0, 120);
+    .slice(0, MAX_CANDIDATES);
 }
 
 function isEditable(el: Element | null): el is HTMLElement {

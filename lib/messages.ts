@@ -39,6 +39,24 @@ export type TabCommand =
   /** 右键菜单触发的反推:交给页面内的结果面板执行 */
   | { type: 'analyzeInPage'; imageUrl: string };
 
+/**
+ * 选图面板盯住页面图片变化用的长连接名。
+ *
+ * 为什么用 Port 而不是「开始监听 / 停止监听」两条指令:侧边栏是被浏览器直接
+ * 销毁的,关闭那一刻来不及发停止指令,页面侧的监听器就会一直挂着空转 ——
+ * 挂在别人的页面上空转尤其不能接受。
+ *
+ * Port 天然解决这件事:侧边栏一关连接就断,onDisconnect 是可靠且即时的收尾信号。
+ * 连接在即监听,连接断即停止,不需要再额外定义一套生命周期协议。
+ */
+export const IMAGE_WATCH_PORT = 'promptary-image-watch';
+
+/** 长连接上推给侧边栏的图片快照。通道本身已限定语义,消息体不必再带 type */
+export interface ImagesUpdatedMessage {
+  /** 当前页面图片的完整快照,顺序为「面积从大到小」 */
+  images: PageImage[];
+}
+
 // ---------------------- 页面内 UI ↔ 后台 ----------------------
 
 export interface AnalyzeContext {

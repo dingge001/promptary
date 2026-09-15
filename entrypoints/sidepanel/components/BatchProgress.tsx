@@ -85,7 +85,12 @@ export default function BatchProgress({ onClose }: Props) {
             className="h-8 w-full"
             title={t('batch.cancelHint')}
             icon={<IconClose />}
-            onClick={() => chrome.runtime.sendMessage({ type: 'cancelBatch' })}
+            onClick={() => {
+              // 必须接住这个 Promise:不带回调、也不接 Promise 的发送一旦失败,
+              // Chrome 会记一条「Unchecked runtime.lastError」到扩展的错误列表。
+              // 取消指令发不出去也没什么可补救的,静默即可
+              void chrome.runtime.sendMessage({ type: 'cancelBatch' }).catch(() => {});
+            }}
           >
             {t('batch.cancel')}
           </Button>

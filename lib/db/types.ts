@@ -132,7 +132,20 @@ export interface Tag extends Syncable {
 export type PromptLanguage = 'auto' | 'zh' | 'en';
 
 export interface AppSettings {
-  /** 模型服务配置(用户自带,OpenAI 兼容协议) */
+  /**
+   * 走哪条模型渠道。
+   *
+   * builtin - Promptary 官方提供的免费渠道。开箱即用、不必注册与充值,
+   *           代价是有每日次数限制,且请求要经过官方服务器转发
+   * custom  - 用户自己的 OpenAI 兼容服务,不受次数限制
+   */
+  providerMode: ProviderMode;
+  /**
+   * 用户自带的模型服务配置。
+   *
+   * 即使当前用的是官方渠道,这份配置也原样留着 —— 两边分开存,
+   * 用户来回切换时才不会把自己的 Key 弄丢。
+   */
   provider: ProviderConfig;
   /** 默认目标模型:反推时按它的格式生成提示词。对应 lib/vision/models.ts 的档案 id */
   defaultModelId: string;
@@ -151,6 +164,9 @@ export interface AppSettings {
   /** 主题 */
   theme: 'system' | 'light' | 'dark';
 }
+
+/** 模型渠道:官方免费渠道,还是用户自带的 */
+export type ProviderMode = 'builtin' | 'custom';
 
 /** OpenAI 兼容的模型服务配置 */
 export interface ProviderConfig {
