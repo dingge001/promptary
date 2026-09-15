@@ -20,6 +20,13 @@ export interface AnalyzeInput {
   imageUrl?: string;
   /** 已知的图片二进制(例如 content script 已经拿到的) */
   imageBlob?: Blob;
+  /**
+   * 来源页面地址与标题。
+   *
+   * 只用于本地:收藏项的 sourceUrl / sourceTitle,以及从中取站点域名。
+   * **不会发给模型** —— 那等于把「用户此刻在看哪个网页」一并送出去,
+   * 属于浏览记录,不值得为一点反推收益这么做。
+   */
   pageUrl?: string;
   pageTitle?: string;
 }
@@ -48,7 +55,6 @@ export interface AnalyzeOptions {
 
 /** system prompt 按目标模型动态生成 —— 换模型就换一整套规则和示例 */
 function buildMessages(
-  input: AnalyzeInput,
   imageUrl: string,
   profile: ModelProfile,
   categories: string[],
@@ -59,13 +65,7 @@ function buildMessages(
     {
       role: 'user',
       content: [
-        {
-          type: 'text',
-          text: buildUserPrompt(profile, {
-            pageTitle: input.pageTitle,
-            pageUrl: input.pageUrl,
-          }, language),
-        },
+        { type: 'text', text: buildUserPrompt(profile, language) },
         // detail: high 让模型保留细节,风格与构图判断更准
         { type: 'image_url', image_url: { url: imageUrl, detail: 'high' } },
       ],
@@ -114,7 +114,7 @@ export async function analyzeImage(
     try {
       const raw = await chatCompletion(
         provider,
-        buildMessages(input, input.imageUrl, profile, categories, language),
+        buildMessages(input.imageUrl, profile, categories, language),
         { json: true, signal, onQuota: options.onQuota },
       );
       const fields = parsePromptFields(raw);
@@ -138,7 +138,7 @@ export async function analyzeImage(
   const processed = await processImage(blob);
   const raw = await chatCompletion(
     provider,
-    buildMessages(input, processed.dataUrl, profile, categories, language),
+    buildMessages(processed.dataUrl, profile, categories, language),
     { json: true, signal, onQuota: options.onQuota },
   );
   const fields = parsePromptFields(raw);

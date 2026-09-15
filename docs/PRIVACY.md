@@ -97,7 +97,8 @@ The device ID is random, is not derived from anything about you, and is not link
 - **Your images.** They are forwarded and discarded. Nothing is written to disk.
 - **Your prompts, or the prompts generated for you.**
 - **Your IP address.** A request counter is held briefly in memory to prevent abuse; it is never written to disk, and is cleared whenever the service restarts.
-- **Which images you analysed, or which sites you were on.**
+- **Which images you analysed.** Requests are not logged.
+- **The pages you visit.** The extension sends the image and nothing else — not the page's address, not its title. Which site you were looking at never leaves your browser.
 
 **Security and retention**
 

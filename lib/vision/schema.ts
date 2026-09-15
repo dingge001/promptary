@@ -105,31 +105,20 @@ export function buildSystemPrompt(
   return parts.join('\n');
 }
 
-/** 供模型参考的画面上下文 */
-export function buildUserPrompt(
-  profile: ModelProfile,
-  ctx: { pageTitle?: string; pageUrl?: string } = {},
-  language: 'zh' | 'en' = 'zh',
-): string {
-  const zh = language === 'zh';
-
-  const context = [
-    ctx.pageTitle ? `${zh ? '来源页面标题' : 'Source page title'}:${ctx.pageTitle}` : '',
-    ctx.pageUrl ? `${zh ? '来源地址' : 'Source URL'}:${ctx.pageUrl}` : '',
-  ]
-    .filter(Boolean)
-    .join('\n');
-
-  return [
-    zh
-      ? `请把这张图片逆向成可用于 ${profile.name} 的提示词。`
-      : `Reverse-engineer this image into a prompt usable with ${profile.name}.`,
-    context
-      ? zh
-        ? `\n参考上下文(仅辅助判断题材,不要把页面信息写进提示词):\n${context}`
-        : `\nContext for reference only (helps judge the subject; do not put page info into the prompt):\n${context}`
-      : '',
-  ].join('');
+/**
+ * 给模型的那句话。
+ *
+ * 刻意不带来源页面的标题和地址。它们对反推的边际价值很低 —— 图片本身
+ * 已经说明了一切,而地址多半是 xxx.net/artworks/12345 这种对写提示词
+ * 毫无帮助的东西。但送出去的却是「用户此刻在看哪个网页」,那属于浏览记录,
+ * 不该为了这点收益离开用户的设备。
+ *
+ * 溯源要用的地址和标题仍然照常记进收藏项,那些只留在本地。
+ */
+export function buildUserPrompt(profile: ModelProfile, language: 'zh' | 'en' = 'zh'): string {
+  return language === 'zh'
+    ? `请把这张图片逆向成可用于 ${profile.name} 的提示词。`
+    : `Reverse-engineer this image into a prompt usable with ${profile.name}.`;
 }
 
 // ---------------------------- 解析 ----------------------------
