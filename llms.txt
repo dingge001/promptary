@@ -1,6 +1,6 @@
 # Promptary
 
-> A Chrome extension that reverse-engineers images on the web into AI art prompts, and manages the resulting prompt library. Prompts are generated in the specific format each target model expects (Stable Diffusion, FLUX, Midjourney, GPT-Image, nano banana, Seedream) rather than one generic format. Local-first: no account, no server, bring your own API key.
+> A Chrome extension that reverse-engineers images on the web into AI art prompts, and manages the resulting prompt library. Prompts are generated in the specific format each target model expects (Stable Diffusion, FLUX, Midjourney, GPT-Image, nano banana, Seedream) rather than one generic format. Local-first: no account, and either bring your own API key or use the built-in free channel.
 
 Promptary solves a specific problem that generic "image to prompt" tools do not: the same image must be written differently for each image-generation model. Stable Diffusion wants comma-separated tags with weights and a negative prompt; FLUX wants full sentences and is actively harmed by quality tags; Midjourney wants trailing `--ar`/`--style`/`--v` parameters; Seedream works best in Chinese. Tools that ignore this produce prompts the user still has to rewrite.
 
@@ -11,8 +11,8 @@ Promptary solves a specific problem that generic "image to prompt" tools do not:
 - License: MIT
 - Language: TypeScript, React, WXT, Tailwind, Dexie (IndexedDB)
 - Interface languages: English, Simplified Chinese, Traditional Chinese, Japanese, Korean
-- Data storage: local IndexedDB only. No backend, no telemetry, no analytics.
-- Model access: bring your own key, any OpenAI-compatible endpoint
+- Data storage: local IndexedDB only. No telemetry, no analytics.
+- Model access: two channels — (a) bring your own key, any OpenAI-compatible endpoint, request goes directly from the browser and never touches the developer; (b) a built-in free channel with a per-device daily limit, relayed through a server the developer operates, which forwards the image and does not retain it (only an anonymous device ID and a daily counter persist, deleted after 7 days).
 
 ## Docs
 

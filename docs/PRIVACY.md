@@ -1,27 +1,45 @@
 # Privacy Policy — Promptary
 
-**Last updated: 2026-09-14**
+**Last updated: 2026-09-15**
 
 Promptary is a Chrome extension that reverse-engineers images into AI art prompts and helps you organise them. This policy explains exactly what happens to your data.
 
-The short version: **we do not collect, transmit, or store any of your data on any server we control.** There is no Promptary account, no analytics, and no telemetry.
+The short version:
+
+- **Your library stays on your computer.** The images, prompts, tags and categories you save are never uploaded to us.
+- **How your image reaches a model depends on which channel you use.** With your own API key, it goes straight from your browser to the service you chose. With the free built-in channel, it is relayed through a server we operate — and we do not retain it.
+- No account, no analytics, no telemetry, no tracking of any kind.
 
 ---
 
-## 1. What we do not collect
+## 1. Two channels, two paths
 
-Promptary has no backend server. We do not operate any service that receives your data. Specifically, we do not collect:
+Promptary can reach a model in two ways, and the difference matters for your privacy. You choose in **Settings → Model service**.
+
+| | Your own API key | Built-in free channel |
+| --- | --- | --- |
+| Who runs the model service | You choose (DeepSeek, OpenAI, OpenRouter, self-hosted…) | We do, using a DeepSeek model |
+| Where your image goes | Directly from your browser to that service | Through a relay server we operate |
+| What we can see | Nothing — the request never touches us | The request passes through, but is not retained |
+| Do you need an account | No | No — an anonymous device ID is generated locally |
+| Daily limit | None | Yes (a few images per day) |
+
+The built-in channel exists so you can try Promptary without signing up for a model service first. **If you would rather nothing pass through us, use your own API key** — that path is fully direct, exactly as it always was.
+
+## 2. What we never collect
+
+Regardless of which channel you use, we do not collect:
 
 - Personal information (name, email, address, phone number)
 - Account credentials (there are no accounts)
-- Browsing history
-- The images you analyse
-- The prompts you save
+- Browsing history, or any record of the pages you visit
+- Your saved images, prompts, tags or categories
+- Which images you have analysed, or when
 - Usage statistics, crash reports, or analytics events
 
 There is no tracking of any kind.
 
-## 2. What is stored, and where
+## 3. What is stored, and where
 
 Everything Promptary saves stays on your own computer:
 
@@ -35,26 +53,57 @@ Everything Promptary saves stays on your own computer:
 
 Deleting items moves them to an in-extension Trash; emptying the Trash permanently removes them. Uninstalling the extension deletes all of the above, since it all lives inside the extension's own storage.
 
-## 3. When data leaves your device
+## 4. When data leaves your device
 
-There is exactly one situation in which data leaves your computer, and **you initiate it every time**:
+### 4.1 With your own API key
 
 > **When you ask Promptary to analyse an image**, that image is sent to the AI model service that *you* configured in Settings.
 
-Promptary supports any OpenAI-compatible API. You supply the endpoint (`baseUrl`), the API key, and the model name. Common choices include DeepSeek, OpenAI, OpenRouter, or a self-hosted service.
+Promptary supports any OpenAI-compatible API. You supply the endpoint (`baseUrl`), the API key, and the model name.
 
-This means:
-
-- The image goes **directly from your browser to the service you chose**. It does not pass through us — we have no server to pass it through.
+- The image goes **directly from your browser to the service you chose**. It does not pass through us.
 - **That provider's privacy policy governs what happens to the image.** If you point Promptary at a third-party API, review that provider's terms.
 - If you point Promptary at a service you run yourself, no third party is involved at all.
-- The prompt text returned by the model is stored locally, as described above.
+
+### 4.2 With the built-in free channel
+
+Analysing an image sends it through a relay server we operate, which forwards it to DeepSeek and returns the result. See the next section for exactly what that server does and does not record.
+
+### 4.3 How the image is transferred (both channels)
 
 By default, Promptary first gives the model service the image's public URL, letting the service fetch it directly. If that fails (for example, the site blocks hotlinking), Promptary downloads the image locally and uploads it as base64 instead. You can force either behaviour in Settings.
 
-The extension makes no network requests of its own. It only contacts the endpoint you configure.
+Note that with URL pass-through, **the image itself is never transmitted by us at all** — only its address is. The bytes are fetched by the model service directly from the original website.
 
-## 4. Permissions, and why each is needed
+## 5. The built-in free channel, in detail
+
+This section applies only if you use the free channel. If you use your own API key, none of it applies to you.
+
+**What the relay server does**
+
+It checks your daily quota, forwards your request to DeepSeek, and passes the answer back. That is its entire job.
+
+**What it records**
+
+| Recorded | Why | Kept for |
+| --- | --- | --- |
+| An anonymous device ID (a random UUID generated by your browser) | To count how many images you have analysed today | 7 days, then deleted automatically |
+| The number of requests made that day | Daily quota | 7 days |
+
+The device ID is random, is not derived from anything about you, and is not linked to any account — there are no accounts. Reinstalling the extension generates a new one.
+
+**What it does not record**
+
+- **Your images.** They are forwarded and discarded. Nothing is written to disk.
+- **Your prompts, or the prompts generated for you.**
+- **Your IP address.** A request counter is held briefly in memory to prevent abuse; it is never written to disk, and is cleared whenever the service restarts.
+- **Which images you analysed, or which sites you were on.**
+
+**Security and retention**
+
+Requests are sent over HTTPS. The only data that persists is the quota table described above, which is deleted on a rolling 7-day basis.
+
+## 6. Permissions, and why each is needed
 
 Chrome shows you a permission warning for this extension. Here is what each one is actually for:
 
@@ -78,35 +127,41 @@ Concretely, this permission allows Promptary to:
 - write text into an input box on the page, when you click "Insert into page" to send a prompt to a generation tool
 - show the hover button on images
 
-It does **not** allow Promptary to do anything in the background. Promptary never reads pages you have not explicitly acted on, and never sends page content anywhere on its own. All of the above happens only in direct response to your clicks, and the only outbound destination is the API endpoint you configured yourself.
+It does **not** allow Promptary to do anything in the background. Promptary never reads pages you have not explicitly acted on, and never sends page content anywhere on its own. All of the above happens only in direct response to your clicks.
 
-## 5. Third-party services
+For the built-in channel, the only outbound destination is our relay server. With your own API key, the only outbound destination is the endpoint you configured yourself.
 
-Promptary itself integrates with no third-party analytics, advertising, or tracking services.
+## 7. Third-party services
 
-The AI model service you configure is a third party of your own choosing. It is not a sub-processor of ours — we have no relationship with it and receive nothing from it. Please review that provider's privacy policy separately.
+Promptary integrates with no third-party analytics, advertising, or tracking services.
 
-## 6. Data sharing and sale
+Two third parties may be involved in analysing an image, depending on your channel:
 
-We do not share, sell, rent, or trade your data, because we never receive it in the first place.
+- **With your own API key**: the AI model service you configured. It is not a sub-processor of ours — we have no relationship with it and receive nothing from it. Review that provider's privacy policy separately.
+- **With the built-in channel**: DeepSeek, which performs the actual image analysis on our behalf. The relay server described in section 5 is ours; DeepSeek receives the request from it and is governed by its own terms.
 
-## 7. Your control over your data
+## 8. Data sharing and sale
+
+We do not share, sell, rent, or trade your data. With your own API key we never receive it at all. With the built-in channel we relay it without retaining it, and use it for no purpose other than producing the answer you asked for.
+
+## 9. Your control over your data
 
 - **Export**: Settings → Data & storage lets you export everything as a JSON file, or into a folder with images as separate files. The export excludes your API key.
 - **Import**: You can import a backup; existing items with the same ID are skipped rather than overwritten.
 - **Delete**: Deleting an item moves it to Trash. Emptying Trash permanently removes it. Uninstalling the extension removes everything.
+- **Avoid our servers entirely**: set the model service to your own API key in Settings. Nothing will pass through us.
 
-## 8. Children's privacy
+## 10. Children's privacy
 
 Promptary is not directed at children and collects no personal information from anyone, including children under 13.
 
-## 9. Changes to this policy
+## 11. Changes to this policy
 
 If this policy changes, the "Last updated" date above will change, and the revision will be visible in the project's public repository.
 
-## 10. Contact
+## 12. Contact
 
-Promptary is an open-source project. Its source code is public, so every claim in this document can be verified directly.
+Promptary is an open-source project. Its source code is public, so every claim in this document can be verified directly — including the relay server's source, which is in the `server/` directory of the repository.
 
 - Repository: https://github.com/dingge001/promptary
 - Questions or issues: https://github.com/dingge001/promptary/issues

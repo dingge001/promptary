@@ -69,11 +69,13 @@ English, 简体中文, 繁體中文, 日本語, 한국어.
 
 ## Privacy
 
-No account. No sign-up. No analytics. No telemetry. **There is no Promptary server.**
+No account. No sign-up. No analytics. No telemetry.
 
 - Your images, prompts and tags live in your browser's local database and are never uploaded to us.
 - Your API key is stored separately from your library and is deliberately excluded from exported backups.
-- The only network request the extension ever makes is the one you trigger: sending an image to the AI model service **you** configured.
+- **How an image reaches a model is your choice.** With your own API key, the request goes straight from your browser to the service you configured — it never touches us. With the free built-in channel, it is relayed through a server we operate, which forwards it and does not retain your images or prompts. Records kept there are an anonymous device ID and a daily counter, deleted after 7 days.
+
+The built-in channel exists so you can try Promptary without signing up for a model service first. If you would rather nothing pass through us, use your own API key — that path is fully direct.
 
 Read the full policy: [English](./docs/PRIVACY.md) · [简体中文](./docs/PRIVACY.zh-CN.md)
 

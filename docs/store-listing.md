@@ -58,11 +58,11 @@ BUILT FOR YOUR OWN LIBRARY
 
 YOUR DATA STAYS YOURS
 
-No account. No sign-up. No analytics. No telemetry. There is no Promptary server.
+No account. No sign-up. No analytics. No telemetry.
 
 Your images, prompts and tags are stored in your browser's local database and never uploaded to us. Your API key is stored separately from your library, and is deliberately excluded from exported backups.
 
-You bring your own API key, which means the only network request Promptary ever makes is the one you trigger: sending an image to the AI model service you configured yourself. Nothing else ever leaves your device.
+You choose how an image reaches a model. With your own API key, the request goes straight from your browser to the service you configured — it never touches us. If you use the built-in free channel instead, the request is relayed through a server we operate, which forwards it and does not retain your images.
 
 Open source — every claim above can be verified in the code:
 https://github.com/dingge001/promptary
@@ -100,11 +100,11 @@ Promptary 把你在网上看到的任意图片,变成一条真正能用的提示
 
 数据始终是你的
 
-没有账号,不用注册,没有埋点,没有遥测。Promptary 没有服务器。
+没有账号,不用注册,没有埋点,没有遥测。
 
 你的图片、提示词、标签都存在浏览器的本地数据库里,不会上传给我们。API 密钥与收藏内容分开存放,并刻意排除在导出的备份之外。
 
-模型接口由你自己提供,这意味着 Promptary 唯一一次网络请求就是你主动触发的那次:把图片发送到你自己配置的 AI 模型服务。除此之外,你的数据不会离开设备。
+图片怎么送到模型由你选择:用自己的 API Key,请求从浏览器直连你配置的服务,完全不经过我们;用官方免费额度,则经我们的一台中转服务器转发 —— 它只转发,不留存你的图片。
 
 项目开源,以上每一条都能在代码里核实:
 https://github.com/dingge001/promptary
@@ -170,22 +170,44 @@ The extension does not run in the background, does not read pages the user has n
 
 ## 7. 数据使用声明
 
+**注意:这一节的答案在加入内置免费额度后变了。**
+
+以前可以答「不收集」,因为请求全部直连用户自己配置的服务。现在内置渠道会把请求经开发者服务器转发,而 Chrome 把「数据离开用户设备」本身就计为收集 —— 即使我们不留存。**如实填「收集」比事后被审核发现不一致要安全得多。**
+
 在「数据使用」表单中:
 
 | 问题 | 选择 |
 | --- | --- |
-| 是否收集或使用用户数据? | **不收集**(扩展本身不向开发者传输任何数据) |
+| 是否收集或使用用户数据? | **是** —— 仅限内置免费额度渠道;自带 API Key 时开发者什么都收不到 |
+| 收集哪些类型 | **Website content**(反推时用户选中的那张图片) |
+| 用途 | **App functionality**(把图片交给模型,换回提示词) |
 | 是否出售用户数据? | 否 |
 | 是否将数据用于与单一用途无关的目的? | 否 |
 | 是否用于确定信用度或放贷? | 否 |
 
 三条认证全部勾选。
 
-**注意**:虽然扩展自身不收集数据,但反推时用户主动把图片发给**用户自己配置的模型服务**。这一点已在详细说明和隐私政策中明确披露。如果表单里有额外备注栏,建议补充:
+**为什么图片算「Website content」**:它取自用户当前浏览的网页,Chrome 的分类里没有比这一项更贴切的。图片以外的任何类型(位置、浏览历史、个人通信、健康、金融、身份信息)都不勾。
+
+如果表单里有额外备注栏,建议补充:
 
 ```
-The extension itself collects and transmits nothing. When the user requests image analysis, the image is sent by the user's browser directly to the AI model endpoint the user configured — the developer operates no server and receives no data.
+Promptary gives users two ways to reach an AI model.
+
+With the user's own API key, the image goes directly from the browser to the endpoint the user configured — the developer receives nothing, and there is no server in the path.
+
+With the free built-in channel (opt-in, selected in Settings), the request is relayed through a server operated by the developer, which forwards it to the model provider and returns the result. That server does not retain images or prompts. It persists only an anonymous, locally-generated device ID and a daily request count, used solely to enforce a per-device daily limit; those records are deleted after 7 days. The device ID is a random UUID, not linked to any account (there are no accounts), and not derived from any user information.
+
+The user's saved library — images, prompts, tags, categories — never leaves their device in either mode.
+
+Full details: https://dingge001.github.io/promptary/PRIVACY
 ```
+
+### 上架前还要确认一件事:扩展内的显著披露
+
+Chrome 的政策要求:当扩展收集数据时,必须在**扩展内**、用户数据被收集**之前**给出清晰告知,不能只写在商店页面和隐私政策里。
+
+设置页已经有说明(`settings.builtinPrivacy`),但用户可能不打开设置就直接反推了。**建议首次使用内置额度反推时给一次明确提示**,并让用户可以选择改用自带 Key。这是审核时可能被问到的点,也是对上架后用户信任的负责。
 
 ## 8. 隐私政策 URL
 
